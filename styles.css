@@ -1,0 +1,67 @@
+/*
+ * Style sheet for site
+ *
+ *
+*/
+
+/*<style> body { padding: 0; margin: 0; } </style>*/
+
+body { 
+  font-family: 'Courier New', monospace;
+}
+header {
+  /*<script src="https://cdn.jsdelivr.net/npm/p5@1.3.0/lib/p5.js"></script>*/
+  /*background-color: #525252;*/
+}
+
+
+
+
+ul {
+  padding-left: 0em;
+}
+
+.navigation {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  list-style: none;
+}
+
+.navigation a {
+  text-decoration: none;
+  padding: 1em;
+  display: block;
+}
+
+.footer {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+  list-style: none;
+}
+
+.main_body {
+  display: flex;
+  max-width: 90vw;
+  margin-left: 5vw;
+  margin-right: 5vw;
+}
+
+.fixed{
+  position: fixed;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.column {
+  flex: 50%;
+  padding: 10px;
+}
+
+
+
+
