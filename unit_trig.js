@@ -1,22 +1,21 @@
-let XLIM = 800;
-let YLIM = 800;
+let DIAMETER;
 let tf; 
 
+
 function setup(){
-  var canvas = createCanvas(XLIM, YLIM)
+  var canvas = createCanvas(800, 800)
   canvas.parent('sketch-holder');
   strokeWeight(3);
   noFill();
+  noCursor();
   
   //Current challenge is to find good sizes CAN BE TWEAKED LATER
   resizeCanvas(windowWidth/2,3*windowHeight/4);
   if (windowWidth < windowHeight){
-    XLIM = windowWidth/2;
-    YLIM = windowWidth/2;
+    DIAMETER = windowWidth/2;
 
   } else {
-    XLIM = windowHeight/2;
-    YLIM = windowHeight/2;
+    DIAMETER = windowHeight/2;
 
   }
 
@@ -24,28 +23,29 @@ function setup(){
 
 }
  
-
+//Main loop 
 function draw(){
   background(236);
-  //Dont use XLIM or YLIM for translation use
-  //the canvas height and width
   translate(windowWidth/4, 3*windowHeight/8);
-  circle(0,0, XLIM);
-  //line(0, 0, XLIM/2, 0);
-  tf.drew();
-  tf.update()
+  circle(0,0, DIAMETER);
+  tf.iterate();
 
 }
 
 class TrigFunctions {
   constructor(){
-    this.radius = XLIM/2;
+    this.radius = DIAMETER/2;
     this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4)  
   }
 
-  drew() {
-    circle(mouseX - windowWidth/4, mouseY - 3*windowHeight/8, 3);
-    line(0,0, 40, 40);
+  iterate(){
+    this.update()
+    this.display()
+  }
+
+
+  display() {
+    circle(mouseX - windowWidth/4, mouseY - 3*windowHeight/8, 10);
     line(0, 0, this.radius*Math.cos(this.angle), this.radius * Math.sin(this.angle));
   }
   
@@ -59,6 +59,7 @@ class TrigFunctions {
 
 /*  NOTES OF SOME ODD THINGS TO REMEMBER
  *  If something is spelled incorectly IT WONT RUN AT ALL
+ *  ^^^^ Check this first if a change results in nothing being drawn.
  *  mouseX and mouseY are the position in the WINDOW not the canvas (or relative to it at least)
  *  so use:
  *  mouseX - windowWidth/4
@@ -68,6 +69,12 @@ class TrigFunctions {
  *
  */
 
-
+/*  COLORS
+ *  (236) OFF WHITE
+ *
+ *
+ *
+ *
+ */
 
 
