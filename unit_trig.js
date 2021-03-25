@@ -1,11 +1,12 @@
 let XLIM = 800;
 let YLIM = 800;
-
+let tf; 
 
 function setup(){
   var canvas = createCanvas(XLIM, YLIM)
   canvas.parent('sketch-holder');
   strokeWeight(3);
+  noFill();
   
   //Current challenge is to find good sizes CAN BE TWEAKED LATER
   resizeCanvas(windowWidth/2,3*windowHeight/4);
@@ -19,6 +20,8 @@ function setup(){
 
   }
 
+  tf =  new TrigFunctions();
+
 }
  
 
@@ -26,34 +29,45 @@ function draw(){
   background(236);
   //Dont use XLIM or YLIM for translation use
   //the canvas height and width
-  translate(windowWidth/4, 3*windowHeight/8)
+  translate(windowWidth/4, 3*windowHeight/8);
   circle(0,0, XLIM);
-  drawPattern();
-
-
-
-
+  //line(0, 0, XLIM/2, 0);
+  tf.drew();
+  tf.update()
 
 }
 
-
-function drawPattern(){
-  //var arcPercent = round(mouseX/XLIM, 3);
-  var arcPercent = mouseX/1000;
-
-  var i = 0;
-  for (i = 0; i < 50; i+=1){
-    line(XLIM*cos(arcPercent * i * TWO_PI)/2, YLIM*sin(arcPercent * i * TWO_PI)/2, 
-         XLIM*cos(arcPercent * (i+1) * TWO_PI)/2, YLIM*sin(arcPercent * (i+1) * TWO_PI)/2)
-
+class TrigFunctions {
+  constructor(){
+    this.radius = XLIM/2;
+    this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4)  
   }
 
-function centeredLine(x1, y1, x2, y2){
-  line(XLIM/2 + x1, YLIM/2 - y1,
-       XLIM/2 + x1, YLIM/2 - y1)
-
+  drew() {
+    circle(mouseX - windowWidth/4, mouseY - 3*windowHeight/8, 3);
+    line(0,0, 40, 40);
+    line(0, 0, this.radius*Math.cos(this.angle), this.radius * Math.sin(this.angle));
+  }
+  
+  update(){
+    this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
+  }
+  
 
 }
 
 
-}
+/*  NOTES OF SOME ODD THINGS TO REMEMBER
+ *  If something is spelled incorectly IT WONT RUN AT ALL
+ *  mouseX and mouseY are the position in the WINDOW not the canvas (or relative to it at least)
+ *  so use:
+ *  mouseX - windowWidth/4
+ *  mouseY - 3*windowHeight/8
+ *  for the mouseXY position in the window
+ *  Going to need to come up with a way that doesnt use magic numbers for the canvas dimentions
+ *
+ */
+
+
+
+
