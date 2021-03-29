@@ -29,9 +29,11 @@ function draw(){
   background(236);
   translate(windowWidth/4, 3*windowHeight/8);
   //rotate(-PI/2);
-  tf.iterate();
-  textSize(52);
   y = window.scrollY;
+  if (y < 100){
+    tf.iterate();
+  }
+  textSize(52);
   text(y, 0, 0);
 }
 
