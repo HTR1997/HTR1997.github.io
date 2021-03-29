@@ -2,6 +2,7 @@ let canvas;
 let DIAMETER;
 let tf; 
 let slid;
+let y;
 
 function setup(){
   canvas = createCanvas(800, 800)
@@ -29,7 +30,9 @@ function draw(){
   translate(windowWidth/4, 3*windowHeight/8);
   //rotate(-PI/2);
   tf.iterate();
-
+  textSize(52);
+  y = window.scrollY;
+  text(y, 0, 0);
 }
 
 class TrigFunctions {
