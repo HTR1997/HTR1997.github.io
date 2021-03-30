@@ -30,16 +30,24 @@ function draw(){
   translate(windowWidth/4, 3*windowHeight/8);
   //rotate(-PI/2);
   y = window.scrollY;
-  if (y < 100){
-    tf.iterate();
+
+  /*Basic way to create a scrolling transition
+   *Has issues with different window dimentions that need to be resolved.
+   */
+  if (y < 150){
+    tf.setShape('triangle');
+  } else {
+    tf.setShape('circle');
   }
-  textSize(52);
-  text(y, 0, 0);
+  tf.iterate();
+  textSize(42);
+  text(y, -windowWidth/4, +3*windowHeight/8);
 }
 
 class TrigFunctions {
   constructor(){
-    this.inverseScale = 1;
+    this.shape = '';
+    this.inverseScale = 2;
     this.diameter = DIAMETER/this.inverseScale;
     this.radius = this.diameter/2;
     this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
@@ -50,8 +58,35 @@ class TrigFunctions {
     this.display()
   }
 
+  update(){
+    //this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
+    this.angle = -(y/300) * TWO_PI;
+    this.inverseScale = slid.value();
+    this.diameter = DIAMETER/this.inverseScale;
+    this.radius = this.diameter/2;
+  }
+  
+ 
+ display() {
+    if (this.shape == 'triangle'){
+      this.drawSin();
+      this.drawCos();
+      this.drawHypotenuse();
+      this.drawCircle();
 
-  display() {
+
+    } else if(this.shape == 'circle'){
+      this.drawCircle();
+
+      this.drawSin();
+      this.drawCos();
+      this.drawHypotenuse();
+
+    } else {
+      this.drawSin();
+
+
+    }
     //this.drawHyperbolicRadius();
     
     //this.drawTan();
@@ -60,8 +95,8 @@ class TrigFunctions {
     //this.drawCsc();
     //this.drawSec();
 
-    this.drawSin();
-    this.drawCos();
+    //this.drawSin();
+    //this.drawCos();
 
     this.drawHypotenuse();
     //this.drawSinh();
@@ -70,12 +105,19 @@ class TrigFunctions {
 
     //this.drawExtendedRadius()
 
-    this.drawCircle();
+    //this.drawCircle();
+
     //this.drawRadius();  
     //this.ppoint();
 
     circle(mouseX - windowWidth/4, mouseY - 3*windowHeight/8, 10); //Cursor 
   }
+ 
+  setShape(shape){
+    this.shape = shape;
+  }
+
+  
 
   ppoint(){
     //This is an example of a work around to fix the odd cordinate system that 
@@ -85,15 +127,8 @@ class TrigFunctions {
     rotate(PI/2);
   }
   
-  update(){
-    this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
-    //this.inverseScale = slid.value();
-    this.diameter = DIAMETER/this.inverseScale;
-    this.radius = this.diameter/2;
-  }
-  
-  drawCircle(){
-    stroke(0);
+drawCircle(){
+    stroke(0,255*y/300);
     circle(0,0, this.diameter);
   }
   
