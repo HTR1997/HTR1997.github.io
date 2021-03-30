@@ -6,7 +6,7 @@ let slid;
 function setup(){
   canvas = createCanvas(800, 800)
   canvas.parent('sketch-holder');
-  strokeWeight(5);
+  strokeWeight(3);
   noFill();
   noCursor();
 
@@ -20,7 +20,7 @@ function setup(){
   }
 
   tf =  new TrigFunctions();
-  slid = createSlider(3/4, 8, 2, 0);
+  //slid = createSlider(3/4, 8, 2, 0);
 }
  
 //Main loop 
@@ -34,7 +34,7 @@ function draw(){
 
 class TrigFunctions {
   constructor(){
-    this.inverseScale = 2;
+    this.inverseScale = 1;
     this.diameter = DIAMETER/this.inverseScale;
     this.radius = this.diameter/2;
     this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
@@ -49,16 +49,16 @@ class TrigFunctions {
   display() {
     //this.drawHyperbolicRadius();
     
-    this.drawTan();
+    //this.drawTan();
     //this.drawCot();
 
-    this.drawCsc();
-    this.drawSec();
+    //this.drawCsc();
+    //this.drawSec();
 
     this.drawSin();
     this.drawCos();
 
- 
+    this.drawHypotenuse();
     //this.drawSinh();
     //this.drawCosh();
     
@@ -66,7 +66,7 @@ class TrigFunctions {
     //this.drawExtendedRadius()
 
     this.drawCircle();
-    this.drawRadius();  
+    //this.drawRadius();  
     //this.ppoint();
 
     circle(mouseX - windowWidth/4, mouseY - 3*windowHeight/8, 10); //Cursor 
@@ -82,7 +82,7 @@ class TrigFunctions {
   
   update(){
     this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
-    this.inverseScale = slid.value();
+    //this.inverseScale = slid.value();
     this.diameter = DIAMETER/this.inverseScale;
     this.radius = this.diameter/2;
   }
@@ -105,6 +105,11 @@ class TrigFunctions {
 
   drawHyperbolicRadius(){
     line(0,0, this.radius*Math.cosh(this.angle), this.radius*Math.sinh(this.angle));
+  }
+
+  drawHypotenuse(){
+    stroke(140, 54, 198);
+    line(0, this.radius*Math.sin(this.angle), this.radius*Math.cos(this.angle), 0);
   }
 
   drawSin(){
