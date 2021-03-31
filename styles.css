@@ -4,7 +4,6 @@
  *
 */
 
-/*<style> body { padding: 0; margin: 0; } </style>*/
 
 body { 
   font-family: 'Courier New', monospace;
@@ -14,7 +13,24 @@ header {
   /*background-color: #525252;*/
 }
 
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 2.5rem;
+}
 
+a:link {
+  color: black;
+}
+
+a:visited{
+  color: black;
+}
+
+a:hover{
+  background-color: lightgray;
+}
 
 
 ul {
@@ -44,8 +60,8 @@ ul {
 .main_body {
   display: flex;
   max-width: 90vw;
-  margin-left: 5vw;
-  margin-right: 5vw;
+  margin-left: 1.5vw;
+  margin-right: 1.5vw;
 }
 
 .fixed{
@@ -60,14 +76,6 @@ ul {
 .column {
   flex: 50%;
   padding: 10px;
-}
-
-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 2.5rem;
-
 }
 
 
