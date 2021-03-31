@@ -13,7 +13,9 @@ header {
   /*background-color: #525252;*/
 }
 
-footer {
+
+
+#footer {
   position: absolute;
   bottom: 0;
   width: 100%;

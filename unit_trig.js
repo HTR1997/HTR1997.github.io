@@ -59,9 +59,9 @@ class TrigFunctions {
   }
 
   update(){
-    //this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
+    this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
     this.angle = -(y/300) * TWO_PI;
-    this.inverseScale = slid.value();
+    //this.inverseScale = slid.value();
     this.diameter = DIAMETER/this.inverseScale;
     this.radius = this.diameter/2;
   }
