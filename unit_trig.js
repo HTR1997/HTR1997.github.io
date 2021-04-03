@@ -1,8 +1,10 @@
 let canvas;
 let DIAMETER;
 let tf; 
+let tri;
+
+//Test variables
 let slid;
-let y;
 
 function setup(){
   canvas = createCanvas(800, 800)
@@ -10,31 +12,29 @@ function setup(){
   strokeWeight(3);
   noFill();
   noCursor();
-
-  
+ 
   //Current challenge is to find good sizes CAN BE TWEAKED LATER
   resizeCanvas(windowWidth/2,3*windowHeight/4);
+
   if (windowWidth < windowHeight){
     DIAMETER = windowWidth/2;
   } else {
     DIAMETER = windowHeight/2;
   }
 
+  slid = createSlider(3/4, 8, 2, 0);
   tf =  new TrigFunctions();
-  //slid = createSlider(3/4, 8, 2, 0);
+  tri = new Triangle();
 }
  
 //Main loop 
 function draw(){
   background(236);
   translate(windowWidth/4, 3*windowHeight/8);
-  //rotate(-PI/2);
-  y = window.scrollY;
-  if (y < 100){
-    tf.iterate();
-  }
-  textSize(52);
-  text(y, 0, 0);
+  
+  //tri.step();
+  tf.step();
+  
 }
 
 class TrigFunctions {
@@ -43,15 +43,31 @@ class TrigFunctions {
     this.diameter = DIAMETER/this.inverseScale;
     this.radius = this.diameter/2;
     this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
+
+    this.scrollAmount = window.scrollY;
   }
 
-  iterate(){
+  step(){
     this.update()
-    this.display()
+    if (this.scrollAmount < 100){
+      this.display();
+    }
   }
 
+  update(){
+    this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
+    this.inverseScale = slid.value();
+    this.diameter = DIAMETER/this.inverseScale;
+    this.radius = this.diameter/2;
+
+    this.scrollAmount = window.scrollY;
+  }
+  
 
   display() {
+    textSize(52);
+    text(this.scrollAmount, 0, 0);
+
     //this.drawHyperbolicRadius();
     
     //this.drawTan();
@@ -159,6 +175,16 @@ class TrigFunctions {
     //line(this.radius/Math.cos(this.angle), 0, this.radius/Math.cos(this.angle), this.radius*Math.sinh(this.angle));
     //line(this.radius*this.angle, 0, this.radius*this.angle, this.radius*Math.sinh(this.angle));
   }
+}
+
+class Triangle extends TrigFunctions{
+  
+  display() {
+    this.drawTan();
+    super.display();
+  }
+
+
 }
 
 
