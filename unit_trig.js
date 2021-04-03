@@ -2,6 +2,8 @@ let canvas;
 let DIAMETER;
 let tf; 
 let tri;
+let cur;
+let ttri;
 
 //Test variables
 let slid;
@@ -25,6 +27,8 @@ function setup(){
   slid = createSlider(3/4, 8, 2, 0);
   tf =  new TrigFunctions();
   tri = new Triangle();
+  cur = new Cursor();
+  ttri = new TwoTriangle();
 }
  
 //Main loop 
@@ -32,8 +36,10 @@ function draw(){
   background(236);
   translate(windowWidth/4, 3*windowHeight/8);
   
-  //tri.step();
-  tf.step();
+  tri.step();
+  //tf.step();
+  cur.step();
+  ttri.step();
   
 }
 
@@ -49,17 +55,19 @@ class TrigFunctions {
 
   step(){
     this.update()
+    this.display();
+
     if (this.scrollAmount < 100){
-      this.display();
+      
     }
   }
 
   update(){
     this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
-    this.inverseScale = slid.value();
     this.diameter = DIAMETER/this.inverseScale;
     this.radius = this.diameter/2;
 
+    //this.inverseScale = slid.value();
     this.scrollAmount = window.scrollY;
   }
   
@@ -76,21 +84,21 @@ class TrigFunctions {
     //this.drawCsc();
     //this.drawSec();
 
-    this.drawSin();
-    this.drawCos();
+    //this.drawSin();
+    //this.drawCos();
 
-    this.drawHypotenuse();
+    //this.drawHypotenuse();
     //this.drawSinh();
     //this.drawCosh();
     
 
     //this.drawExtendedRadius()
 
-    this.drawCircle();
+    //this.drawCircle();
     //this.drawRadius();  
     //this.ppoint();
 
-    circle(mouseX - windowWidth/4, mouseY - 3*windowHeight/8, 10); //Cursor 
+    //circle(mouseX - windowWidth/4, mouseY - 3*windowHeight/8, 10); //Cursor 
   }
 
   ppoint(){
@@ -116,6 +124,11 @@ class TrigFunctions {
   drawRadius(){
     stroke(0);
     line(0,0, this.radius*Math.cos(this.angle), this.radius*Math.sin(this.angle));
+  }
+
+  drawHypotenuse(){
+    stroke(0);
+    line(0, this.radius*Math.sin(this.angle), this.radius*Math.cos(this.angle), 0);
   }
 
   drawExtendedRadius(){
@@ -177,14 +190,27 @@ class TrigFunctions {
   }
 }
 
-class Triangle extends TrigFunctions{
-  
+class Triangle extends TrigFunctions {
   display() {
-    this.drawTan();
-    super.display();
+    this.drawHypotenuse();
+    this.drawCos();
+    this.drawSin();
+  }
+}
+
+
+class TwoTriangle extends Triangle {
+  update() {
+    super.update();
+    this.angle = 2*atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
   }
 
+}
 
+class Cursor extends TrigFunctions {
+  display() {
+    circle(mouseX - windowWidth/4, mouseY - 3*windowHeight/8, 10); //Cursor 
+  }
 }
 
 
