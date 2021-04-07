@@ -2,6 +2,7 @@ let canvas;
 let DIAMETER;
 let tools; 
 
+//TODO: Change .drawThing functions to take colors as arguments rather than being hard coded.
 
 function setup(){
   canvas = createCanvas(800, 800)
@@ -11,7 +12,7 @@ function setup(){
   noCursor();
  
   //Current challenge is to find good sizes CAN BE TWEAKED LATER
-  resizeCanvas(windowWidth/2,3*windowHeight/4);
+  resizeCanvas(windowWidth/2,3*windowHeight/4 + 100);
   if (windowWidth < windowHeight){
     DIAMETER = windowWidth/2;
   } else {
@@ -23,7 +24,10 @@ function setup(){
       new TrigFunctions(),
       new Triangle(),
       new Cursor(),
-      new Text()
+      new Text(),
+      new Test(),
+      new UnitCircle(),
+      new UnitCircleCursor()
     ],
 
     _step: function(){
@@ -35,15 +39,21 @@ function setup(){
  
 //Main loop 
 function draw(){
-  background(236);
-  translate(windowWidth/4, 3*windowHeight/8);
-  tools._step();
+  if (focused){
+    background(236);
+    translate(windowWidth/4, 3*windowHeight/8);
+    tools._step();
+  } else {
+    //Do nothing
+    //May reduce cpu usage when not the focused page. 
+  }
 }
 
 //Super class
 class TrigFunctions {
   constructor(){
     this.inverseScale = 1;
+    this.strokeWeight = 3;
     this.diameter = DIAMETER/this.inverseScale;
     this.radius = this.diameter/2;
     this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
@@ -69,7 +79,11 @@ class TrigFunctions {
   
 
   display() {
-    //Does nothing. Intent is for subclasses to use this function to choose what to display.
+    //Displayes nothing but sets default drawing options.
+    //Should be called by TrigFunction subclasses to draw to canvas. 
+    canvas.drawingContext.setLineDash([]);//Setting dashed lines as off.
+    stroke(0);
+    strokeWeight(this.strokeWeight);
   }
 
   ppoint(){
@@ -86,18 +100,15 @@ class TrigFunctions {
     this.radius = this.diameter/2;
   }
   
-  drawCircle(){
-    stroke(0);
+  drawUnitCircle(){
     circle(0,0, this.diameter);
   }
   
   drawRadius(){
-    stroke(0);
     line(0,0, this.radius*Math.cos(this.angle), this.radius*Math.sin(this.angle));
   }
 
   drawHypotenuse(){
-    stroke(0);
     line(0, this.radius*Math.sin(this.angle), this.radius*Math.cos(this.angle), 0);
   }
 
@@ -162,38 +173,65 @@ class TrigFunctions {
     //line(this.radius*this.angle, 0, 
     //      this.radius*this.angle, this.radius*Math.sinh(this.angle));
   }
+
+
+  drawCursor(){
+    circle(mouseX - windowWidth/4, mouseY - 3*windowHeight/8, 10); //Cursor 
+  }
+
+  drawTangentPoint(){
+    circle(this.radius*Math.cos(this.angle), this.radius*Math.sin(this.angle), 10); //Cursor 
+  }
 }
 
 //Sub classes
 class Triangle extends TrigFunctions {
   display() {
+    super.display();
+    canvas.drawingContext.setLineDash([5,15]);
     this.drawHypotenuse();
     this.drawCos();
     this.drawSin();
   }
 }
 
-class TwoTriangle extends Triangle {
-  update() {
-    super.update();
-    this.angle = 2*atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
-  }
+class UnitCircle extends TrigFunctions {
+  display() {
+    super.display();
+    this.drawUnitCircle();
 
+  }
+}
+
+class UnitCircleCursor extends TrigFunctions {
+  display() {
+    super.display();
+    this.drawTangentPoint();
+  }
 }
 
 class Cursor extends TrigFunctions {
   display() {
-    stroke(0);
-    circle(mouseX - windowWidth/4, mouseY - 3*windowHeight/8, 10); //Cursor 
+    super.display();
+    this.drawCursor();
   }
 }
+
 class Text extends TrigFunctions {
   display(){
+    super.display();
     strokeWeight(1);    
-    textFont('Courier New', 21);
-    //textSize(52);
-    text(this.angle, 0, 0);
-    text('hello world', 0, 20);
+    textFont('Courier New', 22);
+    text(this.angle, -windowWidth/4, 3*windowHeight/8);
+    text('hello\nworld', -windowWidth/4, 3*windowHeight/8+22);
+  }
+}
+
+class Test extends TrigFunctions {
+  display(){
+    super.display();
+
+
   }
 }
  
