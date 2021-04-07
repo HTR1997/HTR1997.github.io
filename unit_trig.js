@@ -7,6 +7,7 @@ let tools;
 function setup(){
   canvas = createCanvas(800, 800)
   canvas.parent('sketch-holder');
+  p5.disableFriendlyErrors = true; 
   strokeWeight(3);
   noFill();
   noCursor();
@@ -25,7 +26,7 @@ function setup(){
       new Triangle(),
       new Cursor(),
       new Text(),
-      new Test(),
+      new Debug(),
       new UnitCircle(),
       new UnitCircleCursor()
     ],
@@ -223,15 +224,15 @@ class Text extends TrigFunctions {
     strokeWeight(1);    
     textFont('Courier New', 22);
     text(this.angle, -windowWidth/4, 3*windowHeight/8);
-    text('hello\nworld', -windowWidth/4, 3*windowHeight/8+22);
+    text('hello world', -windowWidth/4, 3*windowHeight/8+22);
+    //text(Math.round(frameRate()), -windowWidth/4, 3*windowHeight/8+44);
   }
 }
 
-class Test extends TrigFunctions {
+class Debug extends TrigFunctions {
   display(){
     super.display();
-
-
+    //text('Variable' + value, posx, posy);
   }
 }
  
