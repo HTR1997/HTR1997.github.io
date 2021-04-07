@@ -1,12 +1,7 @@
 let canvas;
 let DIAMETER;
-let tf; 
-let tri;
-let cur;
-let ttri;
+let tools; 
 
-//Test variables
-let slid;
 
 function setup(){
   canvas = createCanvas(800, 800)
@@ -17,32 +12,35 @@ function setup(){
  
   //Current challenge is to find good sizes CAN BE TWEAKED LATER
   resizeCanvas(windowWidth/2,3*windowHeight/4);
-
   if (windowWidth < windowHeight){
     DIAMETER = windowWidth/2;
   } else {
     DIAMETER = windowHeight/2;
   }
 
-  slid = createSlider(3/4, 8, 2, 0);
-  tf =  new TrigFunctions();
-  tri = new Triangle();
-  cur = new Cursor();
-  ttri = new TwoTriangle();
+  tools = {
+    shapes: [
+      new TrigFunctions(),
+      new Triangle(),
+      new Cursor(),
+      new Text()
+    ],
+
+    _step: function(){
+      this.shapes.forEach(item => item.step());
+      }
+  };
+
 }
  
 //Main loop 
 function draw(){
   background(236);
   translate(windowWidth/4, 3*windowHeight/8);
-  
-  tri.step();
-  //tf.step();
-  cur.step();
-  ttri.step();
-  
+  tools._step();
 }
 
+//Super class
 class TrigFunctions {
   constructor(){
     this.inverseScale = 1;
@@ -58,7 +56,6 @@ class TrigFunctions {
     this.display();
 
     if (this.scrollAmount < 100){
-      
     }
   }
 
@@ -67,38 +64,12 @@ class TrigFunctions {
     this.diameter = DIAMETER/this.inverseScale;
     this.radius = this.diameter/2;
 
-    //this.inverseScale = slid.value();
     this.scrollAmount = window.scrollY;
   }
   
 
   display() {
-    textSize(52);
-    text(this.scrollAmount, 0, 0);
-
-    //this.drawHyperbolicRadius();
-    
-    //this.drawTan();
-    //this.drawCot();
-
-    //this.drawCsc();
-    //this.drawSec();
-
-    //this.drawSin();
-    //this.drawCos();
-
-    //this.drawHypotenuse();
-    //this.drawSinh();
-    //this.drawCosh();
-    
-
-    //this.drawExtendedRadius()
-
-    //this.drawCircle();
-    //this.drawRadius();  
-    //this.ppoint();
-
-    //circle(mouseX - windowWidth/4, mouseY - 3*windowHeight/8, 10); //Cursor 
+    //Does nothing. Intent is for subclasses to use this function to choose what to display.
   }
 
   ppoint(){
@@ -111,7 +82,6 @@ class TrigFunctions {
   
   update(){
     this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
-    //this.inverseScale = slid.value();
     this.diameter = DIAMETER/this.inverseScale;
     this.radius = this.diameter/2;
   }
@@ -168,7 +138,8 @@ class TrigFunctions {
 
   drawTan(){
     stroke(0);
-    line(this.radius*Math.cos(this.angle), this.radius*Math.sin(this.angle), this.radius/Math.cos(this.angle), 0);
+    line(this.radius*Math.cos(this.angle), this.radius*Math.sin(this.angle), 
+         this.radius/Math.cos(this.angle), 0);
     //line(this.radius, 0, this.radius, this.radius*Math.tan(this.angle));
   }
 
@@ -184,12 +155,16 @@ class TrigFunctions {
   }
 
   drawCosh(){
-    line(0, this.radius*Math.sinh(this.angle), this.radius*Math.cosh(this.angle), this.radius*Math.sinh(this.angle));
-    //line(this.radius/Math.cos(this.angle), 0, this.radius/Math.cos(this.angle), this.radius*Math.sinh(this.angle));
-    //line(this.radius*this.angle, 0, this.radius*this.angle, this.radius*Math.sinh(this.angle));
+    line(0, this.radius*Math.sinh(this.angle), 
+          this.radius*Math.cosh(this.angle), this.radius*Math.sinh(this.angle));
+    //line(this.radius/Math.cos(this.angle), 0, 
+    //      this.radius/Math.cos(this.angle), this.radius*Math.sinh(this.angle));
+    //line(this.radius*this.angle, 0, 
+    //      this.radius*this.angle, this.radius*Math.sinh(this.angle));
   }
 }
 
+//Sub classes
 class Triangle extends TrigFunctions {
   display() {
     this.drawHypotenuse();
@@ -197,7 +172,6 @@ class Triangle extends TrigFunctions {
     this.drawSin();
   }
 }
-
 
 class TwoTriangle extends Triangle {
   update() {
@@ -209,11 +183,20 @@ class TwoTriangle extends Triangle {
 
 class Cursor extends TrigFunctions {
   display() {
+    stroke(0);
     circle(mouseX - windowWidth/4, mouseY - 3*windowHeight/8, 10); //Cursor 
   }
 }
-
-
+class Text extends TrigFunctions {
+  display(){
+    strokeWeight(1);    
+    textFont('Courier New', 21);
+    //textSize(52);
+    text(this.angle, 0, 0);
+    text('hello world', 0, 20);
+  }
+}
+ 
 /*  NOTES OF SOME ODD THINGS TO REMEMBER
  *  If something is spelled incorectly IT WONT RUN AT ALL
  *  ^^^^ Check this first if a change results in nothing being drawn.
@@ -226,6 +209,8 @@ class Cursor extends TrigFunctions {
  *
  *  Add to allow for drawing of dashed lines, use an empty set to use solid line
  *  canvas.drawingContext.setLineDash([5, 15]);
+ *
+ *  stroke weight impacts drawing of fonts. huh.
  */
 
 /*  COLORS
@@ -239,3 +224,9 @@ class Cursor extends TrigFunctions {
  *  (140, 54, 198) PURPLE
  */
 
+/*  Slider framework
+ *  let slid;
+ *  slid = createSlider(3/4, 8, 2, 0);
+ *  this.inverseScale = slid.value();
+ */
+  
