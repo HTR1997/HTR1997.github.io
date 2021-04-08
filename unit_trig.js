@@ -23,12 +23,14 @@ function setup(){
   tools = {
     shapes: [
       new TrigFunctions(),
-      new Triangle(),
+      //new Triangle(),
       new Cursor(),
       new Text(),
       new Debug(),
-      new UnitCircle(),
-      new UnitCircleCursor()
+      //new UnitCircle(),
+      new UnitCircleArc(),
+      new UnitCircleCursor(),
+      new ReverseTriangle()
     ],
 
     _step: function(){
@@ -183,16 +185,51 @@ class TrigFunctions {
   drawTangentPoint(){
     circle(this.radius*Math.cos(this.angle), this.radius*Math.sin(this.angle), 10); //Cursor 
   }
+  
+  drawAngleArc(){
+    stroke(255);
+    strokeWeight(this.strokeWeight + 1);
+    arc(0, 0, 
+        this.diameter, this.diameter,
+        this.angle, 0);
+  }
+
+
+   drawAngleArcPI(){
+    stroke(255);
+    strokeWeight(this.strokeWeight + 1);
+    if (this.angle > 0) {
+      arc(0, 0, 
+      this.diameter, this.diameter,
+      0, this.angle);
+    } else {
+       arc(0, 0, 
+      this.diameter, this.diameter,
+      this.angle, 0);
+   }
+ }
+
 }
 
 //Sub classes
 class Triangle extends TrigFunctions {
   display() {
     super.display();
-    canvas.drawingContext.setLineDash([5,15]);
     this.drawHypotenuse();
     this.drawCos();
     this.drawSin();
+  }
+}
+
+class ReverseTriangle extends TrigFunctions {
+  display() {
+    super.display();
+    canvas.drawingContext.setLineDash([5,15]);
+    line(0,0, this.radius*Math.cos(this.angle), 0);
+    line(this.radius*Math.cos(this.angle), 0, this.radius*Math.cos(this.angle), this.radius*Math.sin(this.angle));
+    this.drawRadius();
+
+
   }
 }
 
@@ -218,12 +255,21 @@ class Cursor extends TrigFunctions {
   }
 }
 
+class UnitCircleArc extends TrigFunctions {
+  display() {
+    super.display();
+    //this.drawAngleArc();
+    this.drawAngleArcPI();
+  }
+}
+
+
 class Text extends TrigFunctions {
   display(){
     super.display();
     strokeWeight(1);    
     textFont('Courier New', 22);
-    text(this.angle, -windowWidth/4, 3*windowHeight/8);
+    text(-this.angle, -windowWidth/4, 3*windowHeight/8);
     text('hello world', -windowWidth/4, 3*windowHeight/8+22);
     //text(Math.round(frameRate()), -windowWidth/4, 3*windowHeight/8+44);
   }
@@ -235,6 +281,8 @@ class Debug extends TrigFunctions {
     //text('Variable' + value, posx, posy);
   }
 }
+
+
  
 /*  NOTES OF SOME ODD THINGS TO REMEMBER
  *  If something is spelled incorectly IT WONT RUN AT ALL
