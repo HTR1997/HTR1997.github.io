@@ -2,7 +2,7 @@ let canvas;
 let DIAMETER;
 let tools; 
 
-//TODO: Change .drawThing functions to take colors as arguments rather than being hard coded.
+//TODO: Come up with a better way to describe shapes.
 
 function setup(){
   canvas = createCanvas(800, 800)
@@ -80,7 +80,6 @@ class TrigFunctions {
     this.scrollAmount = window.scrollY;
   }
   
-
   display() {
     //Displayes nothing but sets default drawing options.
     //Should be called by TrigFunction subclasses to draw to canvas. 
@@ -89,76 +88,108 @@ class TrigFunctions {
     strokeWeight(this.strokeWeight);
   }
 
-  ppoint(){
-    //This is an example of a work around to fix the odd cordinate system that 
-    //results from the positive x, negative y orientation of the canvas
-    rotate(-PI/2);
-    circle(24, 24, 7);
-    rotate(PI/2);
+  //Fundemental trig funcions and derivatives using current angle and radius
+  get sin(){
+    return this.radius * Math.sin(this.angle);
+  }
+
+  get cos(){
+    return this.radius * Math.cos(this.angle);
   }
   
-  update(){
-    this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
-    this.diameter = DIAMETER/this.inverseScale;
-    this.radius = this.diameter/2;
+  get tan(){
+    return this.radius * Math.tan(this.angle);
   }
   
-  drawUnitCircle(){
-    circle(0,0, this.diameter);
+  get csc(){
+    return this.radius / Math.sin(this.angle);
   }
   
-  drawRadius(){
-    line(0,0, this.radius*Math.cos(this.angle), this.radius*Math.sin(this.angle));
+  get sec(){
+    return this.radius / Math.cos(this.angle);
+  }
+  
+  get cot(){
+    return this.radius / Math.tan(this.angle);
+  }
+  
+  get tangentPoint(){
+    return [this.cos, this.sin];
   }
 
-  drawHypotenuse(){
-    line(0, this.radius*Math.sin(this.angle), this.radius*Math.cos(this.angle), 0);
+  get origin(){
+    return [0,0];
+  }
+  
+  //Drawing functions
+  drawUnitCircle(color=[0]){
+    stroke(...color);
+    circle(...this.origin, this.diameter);
+  }
+  
+  drawRadius(color=[0]){
+    stroke(...color);
+    line(...this.origin, 
+          ...this.tangentPoint);
   }
 
-  drawExtendedRadius(){
-    stroke(128);
-    line(0,0, 20*this.radius*Math.cos(this.angle), 20*this.radius*Math.sin(this.angle));
-    line(0,0, -20*this.radius*Math.cos(this.angle), -20*this.radius*Math.sin(this.angle));
+  drawHypotenuse(color=[0]){
+    stroke(...color);
+    line(0, this.sin, 
+          this.cos, 0);
   }
 
-  drawHyperbolicRadius(){
-    line(0,0, this.radius*Math.cosh(this.angle), this.radius*Math.sinh(this.angle));
+  drawExtendedRadius(color=[128]){
+    stroke(...color);
+    line(...this.origin, 
+          20*this.cos, 20*this.sin);
+    line(...this.origin, 
+          -20*this.cos, -20*this.sin);
   }
 
-  drawHypotenuse(){
+  drawHyperbolicRadius(color=[0]){
+    line(...this.origin, 
+          this.radius*Math.cosh(this.angle), this.radius*Math.sinh(this.angle));
+  }
+
+  drawHypotenuse(color=[0]){
     stroke(140, 54, 198);
-    line(0, this.radius*Math.sin(this.angle), this.radius*Math.cos(this.angle), 0);
+    line(0, this.sin, 
+          this.cos, 0);
   }
 
-  drawSin(){
-    stroke(70, 130, 192);
-    line(0,0, 0, this.radius*Math.sin(this.angle));
+
+  drawSin(color=[70, 130, 192]){
+    stroke(...color);
+    line(0,0, 
+          0, this.sin);
   }
 
-  drawCos(){
-    stroke(156, 46, 53);
-    line(0,0, this.radius*Math.cos(this.angle), 0);
+  drawCos(color=[156, 46, 53]){
+    stroke(...color);
+    line(0,0, 
+          this.cos, 0);
   }
 
-  drawCsc(){
-    stroke(196, 128, 32);
+  drawCsc(color=[196, 128, 32]){
+    stroke(...color);
     line(0,0, 0, this.radius/(Math.sin(this.angle)));
   }
 
-  drawSec(){
-    stroke(128, 196, 32);
+  drawSec(color=[128, 196, 32]){
+    stroke(...color);
     line(0,0, this.radius/(Math.cos(this.angle)), 0);
   }
 
-  drawTan(){
-    stroke(0);
+  drawTan(color=[0]){
+    stroke(...color);
     line(this.radius*Math.cos(this.angle), this.radius*Math.sin(this.angle), 
          this.radius/Math.cos(this.angle), 0);
     //line(this.radius, 0, this.radius, this.radius*Math.tan(this.angle));
   }
 
-  drawCot(){
-    stroke(0);
+  drawCot(color=[0]){
+    stroke(...color);
     line(0, this.radius, this.radius/Math.tan(this.angle), this.radius);
   }
  
@@ -278,7 +309,12 @@ class Text extends TrigFunctions {
 class Debug extends TrigFunctions {
   display(){
     super.display();
-    //text('Variable' + value, posx, posy);
+    strokeWeight(1);
+    textFont('Courier New', 22);
+    text(this.tangentPoint, -windowWidth/4, 3*windowHeight/8 + 44);
+
+    //line(0,0, ...this.tangentPoint);
+    this.drawRadius();
   }
 }
 
@@ -298,6 +334,13 @@ class Debug extends TrigFunctions {
  *  canvas.drawingContext.setLineDash([5, 15]);
  *
  *  stroke weight impacts drawing of fonts. huh.
+ *
+ *  There are two ways to draw sin or cos. 
+ *  One has them on the origin and the other has them on, a place i dont have a name for.
+ *
+ *  
+ *
+ *
  */
 
 /*  COLORS
