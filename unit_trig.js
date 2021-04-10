@@ -40,13 +40,13 @@ function setup(){
       //new TrigFunctions(),
       //new Triangle(),
       new Cursor(),
-      //new Text(),
+      new Text(),
       new UnitCircle(),
       new UnitCircleCursor(),
-      //new Debug(),
+      new Debug(),
       new UnitCircleArc(),
       new LeftTriangle(),
-      //new RightTriangle()
+      new RightTriangle()
     ],
 
     _step: function(){
@@ -262,21 +262,25 @@ class Triangle extends TrigFunctions {
 
 class RightTriangle extends TrigFunctions {
   display() {
+    if (mouseIsPressed){
     super.display();
     //canvas.drawingContext.setLineDash([5,15]);
-    this.drawLine(undefined, [0, this.sin], [this.cos, 0]);
+    this.drawLine([140, 54, 198], [0, this.sin], [this.cos, 0]);
     this.drawCos();
     this.drawSin();
+    }
   }
 }
 
 class LeftTriangle extends TrigFunctions {
   display() {
     super.display();
+    if (mouseIsPressed == false){
     canvas.drawingContext.setLineDash([5,15]);
-    this.drawLine(undefined, this.origin, [this.cos, this.sin]);
+    this.drawLine([140, 54, 198], this.origin, [this.cos, this.sin]);
     this.drawCos(undefined);
     this.drawSin(undefined, this.cos);
+    }
   }
 }
 
@@ -320,8 +324,7 @@ class Text extends TrigFunctions {
     super.display();
     strokeWeight(1);    
     textFont('Courier New', 22);
-    text(-this.angle, -windowWidth/4, 3*windowHeight/8);
-    text('hello world', -windowWidth/4, 3*windowHeight/8+22);
+    text('\u03B8 = ' + Math.trunc(1000*-this.angle, 3)/1000, -windowWidth/4, 3*windowHeight/8);
     //text(Math.round(frameRate()), -windowWidth/4, 3*windowHeight/8+44);
   }
 }
@@ -329,8 +332,11 @@ class Text extends TrigFunctions {
 class Debug extends TrigFunctions {
   display(){
     super.display();
-    this.drawRadius();
+    strokeWeight(1);
+    textFont('Courier New', 22);
+    //text('1', this.radius * Math.cos(1.1*this.angle)/2, this.radius * Math.sin(1.1*this.angle)/2);
 
+    //this.drawRadius();
     //strokeWeight(1);
     //textFont('Courier New', 22);
     //text(this.tangentPoint, -windowWidth/4, 3*windowHeight/8 + 44);
