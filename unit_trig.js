@@ -2,7 +2,22 @@ let canvas;
 let DIAMETER;
 let tools; 
 
-//TODO: Come up with a better way to describe shapes.
+/*TODO: Shape primatives and draw primatives
+ *      Make those slider elements that look nice.
+ *      Still need a better way to set shapes, and finish adding shift parameters to draw functions.
+ *      Find a way to set colorschemes and use those values as defaults for things
+ *      like drawSin and drawCos.
+ *      Find a better way to size the canvas based on the window.
+ *      Tweaks for mobile.
+ *
+ *
+ *Done: Use default parameters for drawTrig functions.
+ *      use getters for common trig functions.
+ *
+ *
+ *
+ *
+ */
 
 function setup(){
   canvas = createCanvas(800, 800)
@@ -22,15 +37,16 @@ function setup(){
 
   tools = {
     shapes: [
-      new TrigFunctions(),
+      //new TrigFunctions(),
       //new Triangle(),
       new Cursor(),
-      new Text(),
-      new Debug(),
-      //new UnitCircle(),
-      new UnitCircleArc(),
+      //new Text(),
+      new UnitCircle(),
       new UnitCircleCursor(),
-      new ReverseTriangle()
+      //new Debug(),
+      new UnitCircleArc(),
+      new LeftTriangle(),
+      //new RightTriangle()
     ],
 
     _step: function(){
@@ -55,7 +71,7 @@ function draw(){
 //Super class
 class TrigFunctions {
   constructor(){
-    this.inverseScale = 1;
+    this.inverseScale = 1;//Used to scale the diameter, bigger means smaller circle 
     this.strokeWeight = 3;
     this.diameter = DIAMETER/this.inverseScale;
     this.radius = this.diameter/2;
@@ -121,54 +137,33 @@ class TrigFunctions {
     return [0,0];
   }
   
-  //Drawing functions
+  //Drawing primatives
   drawUnitCircle(color=[0]){
     stroke(...color);
     circle(...this.origin, this.diameter);
   }
   
+  drawLine(color=[0], start, end){
+    stroke(...color);
+    line(...start, ...end);
+  }
+
   drawRadius(color=[0]){
     stroke(...color);
     line(...this.origin, 
           ...this.tangentPoint);
   }
 
-  drawHypotenuse(color=[0]){
+  drawSin(color=[70, 130, 192], shift=0){
     stroke(...color);
-    line(0, this.sin, 
-          this.cos, 0);
+    line(shift, 0, 
+          shift, this.sin);
   }
 
-  drawExtendedRadius(color=[128]){
+  drawCos(color=[156, 46, 53], shift=0){
     stroke(...color);
-    line(...this.origin, 
-          20*this.cos, 20*this.sin);
-    line(...this.origin, 
-          -20*this.cos, -20*this.sin);
-  }
-
-  drawHyperbolicRadius(color=[0]){
-    line(...this.origin, 
-          this.radius*Math.cosh(this.angle), this.radius*Math.sinh(this.angle));
-  }
-
-  drawHypotenuse(color=[0]){
-    stroke(140, 54, 198);
-    line(0, this.sin, 
-          this.cos, 0);
-  }
-
-
-  drawSin(color=[70, 130, 192]){
-    stroke(...color);
-    line(0,0, 
-          0, this.sin);
-  }
-
-  drawCos(color=[156, 46, 53]){
-    stroke(...color);
-    line(0,0, 
-          this.cos, 0);
+    line(0,shift, 
+          this.cos, shift);
   }
 
   drawCsc(color=[196, 128, 32]){
@@ -240,6 +235,19 @@ class TrigFunctions {
    }
  }
 
+  drawExtendedRadius(color=[128]){
+    stroke(...color);
+    line(...this.origin, 
+          20*this.cos, 20*this.sin);
+    line(...this.origin, 
+          -20*this.cos, -20*this.sin);
+  }
+
+  drawHyperbolicRadius(color=[0]){
+    line(...this.origin, 
+          this.radius*Math.cosh(this.angle), this.radius*Math.sinh(this.angle));
+  }
+
 }
 
 //Sub classes
@@ -252,23 +260,35 @@ class Triangle extends TrigFunctions {
   }
 }
 
-class ReverseTriangle extends TrigFunctions {
+class RightTriangle extends TrigFunctions {
+  display() {
+    super.display();
+    //canvas.drawingContext.setLineDash([5,15]);
+    this.drawLine(undefined, [0, this.sin], [this.cos, 0]);
+    this.drawCos();
+    this.drawSin();
+  }
+}
+
+class LeftTriangle extends TrigFunctions {
   display() {
     super.display();
     canvas.drawingContext.setLineDash([5,15]);
-    line(0,0, this.radius*Math.cos(this.angle), 0);
-    line(this.radius*Math.cos(this.angle), 0, this.radius*Math.cos(this.angle), this.radius*Math.sin(this.angle));
-    this.drawRadius();
-
-
+    this.drawLine(undefined, this.origin, [this.cos, this.sin]);
+    this.drawCos(undefined);
+    this.drawSin(undefined, this.cos);
   }
 }
 
 class UnitCircle extends TrigFunctions {
+  DEV_update() {
+    super.update();
+    //this.diameter = 2*this.cos;
+  }
+
   display() {
     super.display();
     this.drawUnitCircle();
-
   }
 }
 
@@ -309,12 +329,15 @@ class Text extends TrigFunctions {
 class Debug extends TrigFunctions {
   display(){
     super.display();
-    strokeWeight(1);
-    textFont('Courier New', 22);
-    text(this.tangentPoint, -windowWidth/4, 3*windowHeight/8 + 44);
+    this.drawRadius();
+
+    //strokeWeight(1);
+    //textFont('Courier New', 22);
+    //text(this.tangentPoint, -windowWidth/4, 3*windowHeight/8 + 44);
 
     //line(0,0, ...this.tangentPoint);
-    this.drawRadius();
+    //this.drawRadius();
+    //this.drawSin(undefined,this.cos);
   }
 }
 
@@ -338,8 +361,13 @@ class Debug extends TrigFunctions {
  *  There are two ways to draw sin or cos. 
  *  One has them on the origin and the other has them on, a place i dont have a name for.
  *
- *  
+ *  Default parameters are cool. Its posible to send 'undefined' as an argument to use the default
+ *  f(a=1, b=9){ return a*b}
+ *  f(undefined, 7) == 7
  *
+ *
+ *  Left and Right triangles. Right ones have have right angle at origin
+ *  Left triangles dont have right angle at origin. (silly name used for drawing)
  *
  */
 
