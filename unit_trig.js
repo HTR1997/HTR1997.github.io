@@ -9,6 +9,7 @@ let tools;
  *      like drawSin and drawCos.
  *      Find a better way to size the canvas based on the window.
  *      Tweaks for mobile.
+ *      Set default angle to be where the mouse will aproximately be so there is less movement on page change. 
  *
  *
  *Done: Use default parameters for drawTrig functions.
@@ -47,6 +48,7 @@ function setup(){
       new UnitCircleArc(),
       new LeftTriangle(),
       new RightTriangle()
+      //new CanvasFrame()
     ],
 
     _step: function(){
@@ -59,7 +61,8 @@ function setup(){
 //Main loop 
 function draw(){
   if (focused){
-    background(236);
+    //background(236);
+    background(255);
     translate(windowWidth/4, 3*windowHeight/8);
     tools._step();
   } else {
@@ -75,7 +78,8 @@ class TrigFunctions {
     this.strokeWeight = 3;
     this.diameter = DIAMETER/this.inverseScale;
     this.radius = this.diameter/2;
-    this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
+    //this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
+    this.angle = 0;
 
     this.scrollAmount = window.scrollY;
   }
@@ -344,6 +348,16 @@ class Debug extends TrigFunctions {
     //line(0,0, ...this.tangentPoint);
     //this.drawRadius();
     //this.drawSin(undefined,this.cos);
+  }
+}
+
+class CanvasFrame extends TrigFunctions {
+  display(){
+    super.display();
+    line(-windowWidth/4,1-3*windowHeight/8, windowWidth/4,1-3*windowHeight/8); 
+    line(-windowWidth/4,1+ 3*windowHeight/8, windowWidth/4,1+3*windowHeight/8); 
+    line(1-windowWidth/4,1-3*windowHeight/8, 1-windowWidth/4,1+3*windowHeight/8); 
+    line(windowWidth/4-1,1-3*windowHeight/8, windowWidth/4-1,1+3*windowHeight/8); 
   }
 }
 
