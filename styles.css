@@ -7,16 +7,13 @@
 
 body { 
   font-family: 'Courier New', monospace;
-}
-header {
-  /*<script src="https://cdn.jsdelivr.net/npm/p5@1.3.0/lib/p5.js"></script>*/
-  /*background-color: #525252;*/
+  display: flex;
 }
 
 footer {
   position: absolute;
   bottom: 0;
-  width: 100%;
+  width: 50%;
   height: 2.5rem;
 }
 
@@ -32,11 +29,6 @@ a:hover{
   background-color: lightgray;
 }
 
-
-ul {
-  padding-left: 0em;
-}
-
 .navigation {
   display: flex;
   flex-flow: row wrap;
@@ -50,32 +42,27 @@ ul {
   display: block;
 }
 
-.old_footer {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: flex-end;
-  list-style: none;
-}
-
 .main_body {
-  display: flex;
   max-width: 90vw;
   margin-left: 1.5vw;
   margin-right: 1.5vw;
 }
 
 .fixed{
+  top: 0;
   position: fixed;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
 }
 
 .column {
   flex: 50%;
-  padding: 10px;
+}
+
+.vline {
+  border-left: 6px solid black;
+  height: 100%;
+  position: absolute;
+  left: 50%;
+  margin-left: -3px;
 }
 
 

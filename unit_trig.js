@@ -29,7 +29,7 @@ function setup(){
   noCursor();
  
   //Current challenge is to find good sizes CAN BE TWEAKED LATER
-  resizeCanvas(windowWidth/2,3*windowHeight/4 + 100);
+  resizeCanvas(windowWidth, windowHeight);
   if (windowWidth < windowHeight){
     DIAMETER = windowWidth/2;
   } else {
@@ -61,8 +61,8 @@ function setup(){
 //Main loop 
 function draw(){
   if (focused){
-    //background(236);
-    background(255);
+    background(236);
+    //background(255);
     translate(windowWidth/4, 3*windowHeight/8);
     tools._step();
   } else {
