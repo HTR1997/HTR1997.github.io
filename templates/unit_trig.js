@@ -9,6 +9,7 @@ let tools;
  *      like drawSin and drawCos.
  *      Find a better way to size the canvas based on the window.
  *      Tweaks for mobile.
+ *      Set default angle to be where the mouse will aproximately be so there is less movement on page change. 
  *
  *
  *Done: Use default parameters for drawTrig functions.
@@ -28,7 +29,7 @@ function setup(){
   noCursor();
  
   //Current challenge is to find good sizes CAN BE TWEAKED LATER
-  resizeCanvas(windowWidth/2,3*windowHeight/4 + 100);
+  resizeCanvas(windowWidth, windowHeight);
   if (windowWidth < windowHeight){
     DIAMETER = windowWidth/2;
   } else {
@@ -40,12 +41,14 @@ function setup(){
       //new TrigFunctions(),
       //new Triangle(),
       new Cursor(),
-      //new Text(),
+      new Text(),
       new UnitCircle(),
       new UnitCircleCursor(),
-      //new Debug(),
+      new Debug(),
+      new UnitCircleArc(),
       new LeftTriangle(),
-      //new RightTriangle()
+      new RightTriangle()
+      //new CanvasFrame()
     ],
 
     _step: function(){
@@ -59,6 +62,7 @@ function setup(){
 function draw(){
   if (focused){
     background(236);
+    //background(255);
     translate(windowWidth/4, 3*windowHeight/8);
     tools._step();
   } else {
@@ -74,7 +78,8 @@ class TrigFunctions {
     this.strokeWeight = 3;
     this.diameter = DIAMETER/this.inverseScale;
     this.radius = this.diameter/2;
-    this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
+    //this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
+    this.angle = 0;
 
     this.scrollAmount = window.scrollY;
   }
@@ -210,6 +215,29 @@ class TrigFunctions {
   drawTangentPoint(){
     circle(this.radius*Math.cos(this.angle), this.radius*Math.sin(this.angle), 10); //Cursor 
   }
+  
+  drawAngleArc(){
+    stroke(255);
+    strokeWeight(this.strokeWeight + 1);
+    arc(0, 0, 
+        this.diameter, this.diameter,
+        this.angle, 0);
+  }
+
+
+   drawAngleArcPI(){
+    stroke(255);
+    strokeWeight(this.strokeWeight + 1);
+    if (this.angle > 0) {
+      arc(0, 0, 
+      this.diameter, this.diameter,
+      0, this.angle);
+    } else {
+       arc(0, 0, 
+      this.diameter, this.diameter,
+      this.angle, 0);
+   }
+ }
 
   drawExtendedRadius(color=[128]){
     stroke(...color);
@@ -230,31 +258,33 @@ class TrigFunctions {
 class Triangle extends TrigFunctions {
   display() {
     super.display();
-    canvas.drawingContext.setLineDash([5,15]);
     this.drawHypotenuse();
     this.drawCos();
     this.drawSin();
   }
 }
 
-
 class RightTriangle extends TrigFunctions {
   display() {
+    if (mouseIsPressed){
     super.display();
     //canvas.drawingContext.setLineDash([5,15]);
-    this.drawLine(undefined, [0, this.sin], [this.cos, 0]);
+    this.drawLine([140, 54, 198], [0, this.sin], [this.cos, 0]);
     this.drawCos();
     this.drawSin();
+    }
   }
 }
 
 class LeftTriangle extends TrigFunctions {
   display() {
     super.display();
+    if (mouseIsPressed == false){
     canvas.drawingContext.setLineDash([5,15]);
-    this.drawLine(undefined, this.origin, [this.cos, this.sin]);
+    this.drawLine([140, 54, 198], this.origin, [this.cos, this.sin]);
     this.drawCos(undefined);
     this.drawSin(undefined, this.cos);
+    }
   }
 }
 
@@ -284,13 +314,21 @@ class Cursor extends TrigFunctions {
   }
 }
 
+class UnitCircleArc extends TrigFunctions {
+  display() {
+    super.display();
+    //this.drawAngleArc();
+    this.drawAngleArcPI();
+  }
+}
+
+
 class Text extends TrigFunctions {
   display(){
     super.display();
     strokeWeight(1);    
     textFont('Courier New', 22);
-    text(this.angle, -windowWidth/4, 3*windowHeight/8);
-    text('hello world', -windowWidth/4, 3*windowHeight/8+22);
+    text('\u03B8 = ' + Math.trunc(1000*-this.angle, 3)/1000, -windowWidth/4, 3*windowHeight/8);
     //text(Math.round(frameRate()), -windowWidth/4, 3*windowHeight/8+44);
   }
 }
@@ -298,8 +336,11 @@ class Text extends TrigFunctions {
 class Debug extends TrigFunctions {
   display(){
     super.display();
-    this.drawRadius();
+    strokeWeight(1);
+    textFont('Courier New', 22);
+    //text('1', this.radius * Math.cos(1.1*this.angle)/2, this.radius * Math.sin(1.1*this.angle)/2);
 
+    //this.drawRadius();
     //strokeWeight(1);
     //textFont('Courier New', 22);
     //text(this.tangentPoint, -windowWidth/4, 3*windowHeight/8 + 44);
@@ -309,6 +350,18 @@ class Debug extends TrigFunctions {
     //this.drawSin(undefined,this.cos);
   }
 }
+
+class CanvasFrame extends TrigFunctions {
+  display(){
+    super.display();
+    line(-windowWidth/4,1-3*windowHeight/8, windowWidth/4,1-3*windowHeight/8); 
+    line(-windowWidth/4,1+ 3*windowHeight/8, windowWidth/4,1+3*windowHeight/8); 
+    line(1-windowWidth/4,1-3*windowHeight/8, 1-windowWidth/4,1+3*windowHeight/8); 
+    line(windowWidth/4-1,1-3*windowHeight/8, windowWidth/4-1,1+3*windowHeight/8); 
+  }
+}
+
+
  
 /*  NOTES OF SOME ODD THINGS TO REMEMBER
  *  If something is spelled incorectly IT WONT RUN AT ALL
