@@ -11,6 +11,10 @@ body {
   margin: 0;
 }
 
+header {
+  box-sizing: border-box;
+}
+
 footer {
   position: absolute;
   bottom: 0;
@@ -36,11 +40,18 @@ a:hover{
   background-color: lightgray;
 }
 
+h1 {
+  text-align: center;
+}
+
 .navigation {
   display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   flex-flow: row wrap;
   justify-content: space-between;
   list-style: none;
+  align-items: center;
 }
 
 .navigation a {
@@ -48,6 +59,21 @@ a:hover{
   padding: 1em;
   display: block;
 }
+
+#title {
+  order: 0;
+}
+
+/*max width needs to be changed depending on what the title contains.
+ * At the same time, it should be good enough for most screen ::).*/
+
+@media(max-width: 1000px){
+  #title {
+    order: 1;
+    flex-grow: 1;
+  }
+}
+
 
 .main_body {
   max-width: 90vw;
