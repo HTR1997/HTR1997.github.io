@@ -1,6 +1,7 @@
 let canvas;
 let DIAMETER;
 let tools; 
+const SHIFT_VALUES = [1/4, 3/8];
 
 /*TODO: Shape primatives and draw primatives
  *      Make those slider elements that look nice.
@@ -27,7 +28,7 @@ function setup(){
   strokeWeight(3);
   noFill();
   noCursor();
- 
+
   //Current challenge is to find good sizes CAN BE TWEAKED LATER
   resizeCanvas(windowWidth, windowHeight);
   if (windowWidth < windowHeight){
@@ -53,17 +54,17 @@ function setup(){
 
     _step: function(){
       this.shapes.forEach(item => item.step());
-      }
+    }
   };
 
 }
- 
+
 //Main loop 
 function draw(){
   if (focused){
     background(236);
     //background(255);
-    translate(windowWidth/4, 3*windowHeight/8);
+    translate(windowWidth*SHIFT_VALUES[0], windowHeight*SHIFT_VALUES[1]);
     tools._step();
   } else {
     //Do nothing
@@ -115,4 +116,4 @@ function draw(){
  *  slid = createSlider(3/4, 8, 2, 0);
  *  this.inverseScale = slid.value();
  */
-  
+

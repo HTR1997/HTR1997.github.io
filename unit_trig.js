@@ -1,6 +1,7 @@
 let canvas;
 let DIAMETER;
 let tools; 
+const SHIFT_VALUES = [1/4, 3/8];
 
 /*TODO: Shape primatives and draw primatives
  *      Make those slider elements that look nice.
@@ -63,7 +64,7 @@ function draw(){
   if (focused){
     background(236);
     //background(255);
-    translate(windowWidth/4, 3*windowHeight/8);
+    translate(windowWidth*SHIFT_VALUES[0], windowHeight*SHIFT_VALUES[1]);
     tools._step();
   } else {
     //Do nothing
