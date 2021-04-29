@@ -39,16 +39,8 @@ function setup(){
 
   tools = {
     shapes: [
-      //new TrigFunctions(),
+      new CustomTriangle(),
       new Cursor()
-      //new Text(),
-      //new UnitCircle(),
-      //new UnitCircleCursor(),
-      //new Debug(),
-      //new UnitCircleArc(),
-      //new LeftTriangle(),
-      //new RightTriangle()
-      //new CanvasFrame()
     ],
 
     _step: function(){
@@ -69,6 +61,18 @@ function draw(){
   } else {
     //Do nothing
     //May reduce cpu usage when not the focused page. 
+  }
+}
+
+class CustomTriangle extends TrigFunctions {
+  display() {
+    super.display();
+    this.drawLine([0], this.origin, this.mouse);
+    this.drawLine([0], this.origin, this.mouseX);
+    this.drawLine([0], this.mouseX, this.mouse);
+    //XXX
+    text('hi', 50, 0);
+
   }
 }
 
