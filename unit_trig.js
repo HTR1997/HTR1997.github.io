@@ -3,24 +3,6 @@ let DIAMETER;
 let tools; 
 const SHIFT_VALUES = [1/4, 3/8];
 
-/*TODO: Shape primatives and draw primatives
- *      Make those slider elements that look nice.
- *      Still need a better way to set shapes, and finish adding shift parameters to draw functions.
- *      Find a way to set colorschemes and use those values as defaults for things
- *      like drawSin and drawCos.
- *      Find a better way to size the canvas based on the window.
- *      Tweaks for mobile.
- *      Set default angle to be where the mouse will aproximately be so there is less movement on page change. 
- *
- *
- *Done: Use default parameters for drawTrig functions.
- *      use getters for common trig functions.
- *
- *
- *
- *
- */
-
 function setup(){
   canvas = createCanvas(800, 800)
   canvas.parent('sketch-holder');

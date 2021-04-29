@@ -18,13 +18,17 @@
 //Super class
 class TrigFunctions {
   constructor(){
+    this.windowWidthShift = windowWidth*SHIFT_VALUES[0];
+    this.windowHeightShift = windowHeight*SHIFT_VALUES[1];
+
     this.inverseScale = 1;//Used to scale the diameter, bigger means smaller circle 
     this.strokeWeight = 3;
     this.diameter = DIAMETER/this.inverseScale;
     this.radius = this.diameter/2;
     //this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
     this.angle = 0;
-
+    this._mouseX = mouseX - this.windowWidthShift;
+    this._mouseY = mouseY - this.windowHeightShift;
     this.scrollAmount = window.scrollY;
   }
 
@@ -37,18 +41,22 @@ class TrigFunctions {
   }
 
   update(){
-    this.angle = atan2(mouseY - 3*windowHeight/8, mouseX - windowWidth/4);
+    this._mouseX = mouseX - this.windowWidthShift;
+    this._mouseY = mouseY - this.windowHeightShift;
+
+    this.angle = atan2(this._mouseY, this._mouseX);
     this.diameter = DIAMETER/this.inverseScale;
     this.radius = this.diameter/2;
 
     this.scrollAmount = window.scrollY;
   }
-  
+
   display() {
     //Displayes nothing but sets default drawing options.
     //Should be called by TrigFunction subclasses to draw to canvas. 
     canvas.drawingContext.setLineDash([]);//Setting dashed lines as off.
     stroke(0);
+    noFill();
     strokeWeight(this.strokeWeight);
   }
 
@@ -60,23 +68,23 @@ class TrigFunctions {
   get cos(){
     return this.radius * Math.cos(this.angle);
   }
-  
+
   get tan(){
     return this.radius * Math.tan(this.angle);
   }
-  
+
   get csc(){
     return this.radius / Math.sin(this.angle);
   }
-  
+
   get sec(){
     return this.radius / Math.cos(this.angle);
   }
-  
+
   get cot(){
     return this.radius / Math.tan(this.angle);
   }
-  
+
   get tangentPoint(){
     return [this.cos, this.sin];
   }
@@ -84,13 +92,24 @@ class TrigFunctions {
   get origin(){
     return [0,0];
   }
-  
+
+  get mouse(){
+    return [this._mouseX, this._mouseY];
+  }
+
+  get mouseX(){
+    return [this._mouseX, 0];
+  }
+
+  get mouseY(){
+    return [0, this._mouseY];
+  }
   //Drawing primatives
   drawUnitCircle(color=[0]){
     stroke(...color);
     circle(...this.origin, this.diameter);
   }
-  
+
   drawLine(color=[0], start, end){
     stroke(...color);
     line(...start, ...end);
@@ -99,19 +118,19 @@ class TrigFunctions {
   drawRadius(color=[0]){
     stroke(...color);
     line(...this.origin, 
-          ...this.tangentPoint);
+      ...this.tangentPoint);
   }
 
   drawSin(color=[70, 130, 192], shift=0){
     stroke(...color);
     line(shift, 0, 
-          shift, this.sin);
+      shift, this.sin);
   }
 
   drawCos(color=[156, 46, 53], shift=0){
     stroke(...color);
     line(0,shift, 
-          this.cos, shift);
+      this.cos, shift);
   }
 
   drawCsc(color=[196, 128, 32]){
@@ -127,7 +146,7 @@ class TrigFunctions {
   drawTan(color=[0]){
     stroke(...color);
     line(this.radius*Math.cos(this.angle), this.radius*Math.sin(this.angle), 
-         this.radius/Math.cos(this.angle), 0);
+      this.radius/Math.cos(this.angle), 0);
     //line(this.radius, 0, this.radius, this.radius*Math.tan(this.angle));
   }
 
@@ -135,7 +154,7 @@ class TrigFunctions {
     stroke(...color);
     line(0, this.radius, this.radius/Math.tan(this.angle), this.radius);
   }
- 
+
   drawSinh(){
     line(this.radius*Math.cosh(this.angle), 0, this.radius*Math.cosh(this.angle), this.radius*Math.sinh(this.angle));
     //line(this.radius/Math.cos(this.angle), 0, this.radius/Math.cos(this.angle), this.radius*Math.sinh(this.angle));
@@ -144,7 +163,7 @@ class TrigFunctions {
 
   drawCosh(){
     line(0, this.radius*Math.sinh(this.angle), 
-          this.radius*Math.cosh(this.angle), this.radius*Math.sinh(this.angle));
+      this.radius*Math.cosh(this.angle), this.radius*Math.sinh(this.angle));
     //line(this.radius/Math.cos(this.angle), 0, 
     //      this.radius/Math.cos(this.angle), this.radius*Math.sinh(this.angle));
     //line(this.radius*this.angle, 0, 
@@ -153,47 +172,48 @@ class TrigFunctions {
 
 
   drawCursor(){
-    circle(mouseX - windowWidth/4, mouseY - 3*windowHeight/8, 10); //Cursor 
+    circle(this._mouseX,
+      this._mouseY, 10); //Cursor 
   }
 
   drawTangentPoint(){
-    circle(this.radius*Math.cos(this.angle), this.radius*Math.sin(this.angle), 10); //Cursor 
+    circle(this.radius*Math.cos(this.angle), 
+      this.radius*Math.sin(this.angle), 10); //Cursor 
   }
-  
+
   drawAngleArc(){
     stroke(255);
     strokeWeight(this.strokeWeight + 1);
     arc(0, 0, 
-        this.diameter, this.diameter,
-        this.angle, 0);
+      this.diameter, this.diameter,
+      this.angle, 0);
   }
 
-
-   drawAngleArcPI(){
+  drawAngleArcPI(){
     stroke(255);
     strokeWeight(this.strokeWeight + 1);
     if (this.angle > 0) {
       arc(0, 0, 
-      this.diameter, this.diameter,
-      0, this.angle);
+        this.diameter, this.diameter,
+        0, this.angle);
     } else {
-       arc(0, 0, 
-      this.diameter, this.diameter,
-      this.angle, 0);
-   }
- }
+      arc(0, 0, 
+        this.diameter, this.diameter,
+        this.angle, 0);
+    }
+  }
 
   drawExtendedRadius(color=[128]){
     stroke(...color);
     line(...this.origin, 
-          20*this.cos, 20*this.sin);
+      20*this.cos, 20*this.sin);
     line(...this.origin, 
-          -20*this.cos, -20*this.sin);
+      -20*this.cos, -20*this.sin);
   }
 
   drawHyperbolicRadius(color=[0]){
     line(...this.origin, 
-          this.radius*Math.cosh(this.angle), this.radius*Math.sinh(this.angle));
+      this.radius*Math.cosh(this.angle), this.radius*Math.sinh(this.angle));
   }
 
 }
@@ -211,11 +231,11 @@ class Triangle extends TrigFunctions {
 class RightTriangle extends TrigFunctions {
   display() {
     if (mouseIsPressed){
-    super.display();
-    //canvas.drawingContext.setLineDash([5,15]);
-    this.drawLine([140, 54, 198], [0, this.sin], [this.cos, 0]);
-    this.drawCos();
-    this.drawSin();
+      super.display();
+      //canvas.drawingContext.setLineDash([5,15]);
+      this.drawLine([140, 54, 198], [0, this.sin], [this.cos, 0]);
+      this.drawCos();
+      this.drawSin();
     }
   }
 }
@@ -224,10 +244,10 @@ class LeftTriangle extends TrigFunctions {
   display() {
     super.display();
     if (mouseIsPressed == false){
-    canvas.drawingContext.setLineDash([5,15]);
-    this.drawLine([140, 54, 198], this.origin, [this.cos, this.sin]);
-    this.drawCos(undefined);
-    this.drawSin(undefined, this.cos);
+      canvas.drawingContext.setLineDash([5,15]);
+      this.drawLine([140, 54, 198], this.origin, [this.cos, this.sin]);
+      this.drawCos(undefined);
+      this.drawSin(undefined, this.cos);
     }
   }
 }
@@ -265,7 +285,6 @@ class UnitCircleArc extends TrigFunctions {
     this.drawAngleArcPI();
   }
 }
-
 
 class Text extends TrigFunctions {
   display(){
@@ -306,7 +325,7 @@ class CanvasFrame extends TrigFunctions {
 }
 
 
- 
+
 /*  NOTES OF SOME ODD THINGS TO REMEMBER
  *  If something is spelled incorectly IT WONT RUN AT ALL
  *  ^^^^ Check this first if a change results in nothing being drawn.
@@ -351,4 +370,4 @@ class CanvasFrame extends TrigFunctions {
  *  slid = createSlider(3/4, 8, 2, 0);
  *  this.inverseScale = slid.value();
  */
-  
+
