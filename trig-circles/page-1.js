@@ -2,6 +2,7 @@ let canvas;
 let DIAMETER;
 let tools; 
 const SHIFT_VALUES = [1/4, 3/8];
+const BACKGROUND_COLOR = 236;
 
 /*TODO: Shape primatives and draw primatives
 ../ *      Make those slider elements that look nice.
@@ -53,7 +54,7 @@ function setup(){
 //Main loop 
 function draw(){
   if (focused){
-    background(236);
+    background(BACKGROUND_COLOR);
     //background(255);
     
     translate(windowWidth*SHIFT_VALUES[0], windowHeight*SHIFT_VALUES[1]);
@@ -70,8 +71,17 @@ class CustomTriangle extends TrigFunctions {
     this.drawLine([0], this.origin, this.mouse);
     this.drawLine([0], this.origin, this.mouseX);
     this.drawLine([0], this.mouseX, this.mouse);
-    //XXX
-    text('hi', 50, 0);
+
+    let ang = this.angle 
+
+    this.write([(this.mouse[0])/2, (this.mouse[1])/2], 
+                'c', 24);
+
+    this.write([(this.mouse[0])/2, 0], 
+                'a', 24);
+
+    this.write([this.mouse[0], this.mouse[1]/2], 
+                'b', 24);
 
   }
 }
