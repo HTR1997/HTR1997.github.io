@@ -216,13 +216,33 @@ class TrigFunctions {
       this.radius*Math.cosh(this.angle), this.radius*Math.sinh(this.angle));
   }
 
+  write(position=[0,0], words = '', size=24){
+    textFont('Monospace');
+    let tw = textWidth(words);
+    noStroke();
+    fill(BACKGROUND_COLOR, 255);
+    rect(position[0]-tw/2, position[1]-tw, tw, size);
+    strokeWeight(1);
+    fill(0);
+    textSize(size);
+    textAlign(CENTER, CENTER);
+    text(words, ...position);
+
+    strokeWeight(this.strokeWeight);
+  }
+
 }
 
 //Sub classes
 class Triangle extends TrigFunctions {
+  constructor(is=1){
+    super();
+    this.inverseScale = is;
+  }
+
   display() {
     super.display();
-    this.drawHypotenuse();
+    this.drawLine([0], [0, this.sin], [this.cos, 0]);
     this.drawCos();
     this.drawSin();
   }
@@ -253,9 +273,14 @@ class LeftTriangle extends TrigFunctions {
 }
 
 class UnitCircle extends TrigFunctions {
+  constructor(is=1){
+    super();
+    this.inverseScale = is;
+  }
+
   DEV_update() {
     super.update();
-    //this.diameter = 2*this.cos;
+    this.diameter = 2*this.cos;
   }
 
   display() {
@@ -371,3 +396,6 @@ class CanvasFrame extends TrigFunctions {
  *  this.inverseScale = slid.value();
  */
 
+/*  Dashed lines
+ *  canvas.drawingContext.setLineDash([5,15]);
+ */
