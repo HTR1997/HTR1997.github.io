@@ -1,4 +1,6 @@
-/*TODO: Shape primatives and draw primatives
+/*TODO: Add ability to change html and js elements with hotkey
+ *      
+ *      Shape primatives and draw primatives
  *      Make those slider elements that look nice.
  *      Still need a better way to set shapes, and finish adding shift parameters to draw functions.
  *      Find a way to set colorschemes and use those values as defaults for things
@@ -261,6 +263,11 @@ class RightTriangle extends TrigFunctions {
 }
 
 class LeftTriangle extends TrigFunctions {
+  constructor(is=1){
+    super();
+    this.inverseScale = is;
+  }
+
   display() {
     super.display();
     if (mouseIsPressed == false){

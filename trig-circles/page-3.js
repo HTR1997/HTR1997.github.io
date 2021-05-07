@@ -25,7 +25,7 @@ function setup(){
     shapes: [
       new UnitCircle(RADIUS_SCALE),
       new CustomTriangle(RADIUS_SCALE),
-      new Triangle(RADIUS_SCALE),
+      new CustomLeftTriangle(RADIUS_SCALE),
       new TextOverlay(RADIUS_SCALE), 
       new Cursor()
     ],
@@ -105,5 +105,18 @@ class TextOverlay extends TrigFunctions {
   }
 }
 
+class CustomLeftTriangle extends TrigFunctions {
+  constructor(is=1){
+    super();
+    this.inverseScale = is;
+  }
 
-
+  display() {
+    super.display();
+    if (mouseIsPressed == false){
+      this.drawLine([0], this.origin, [this.cos, this.sin]);
+      this.drawCos([0]);
+      this.drawSin([0], this.cos);
+    }
+  }
+}
