@@ -39,17 +39,8 @@ function draw(){
 
     let rectSize = ceil(DIAMETER/5.5);//About 90
 
-    circle(0,0,20);
+    circle(0,0,20); //P
     tg.display(ang);
-    for (let r = -3; r < 7; r += 2){
-      for (let q = -4; q <= 4; q+=2){
-        //rect(rectSize*q,rectSize*r, rectSize, rectSize, 20);
-      }
-      console.log(rectSize);
-      //rect(0,rectSize*r, rectSize, rectSize, 20);
-      //circle(0, dia*r, 3*dia/4);
-      //line(0,dia*r, 3*dia/8*cos(ang), dia*r + 3*dia/8*sin(ang));
-    }
 
   } else {
     //Do nothing
@@ -101,42 +92,53 @@ class Rec{
         break;
 
       case 1:
+        //Radius
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
         break;
 
       case 2:
+        //Radius
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
 
+        //Cos
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], 0 + this.position[1]);
         //circle(this.circleRadius*cos(angle) + this.position[0], this.position[1], this.pointSize);
 
+        //Sin
         line(...this.position, this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         //circle(this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
         break;
 
       case 3:
+        //Radius
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
 
+        //Cos
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.position[1]);
-
+        
+        //Sin
         line(this.circleRadius*cos(angle) + this.position[0], this.position[1], 
           this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         break;
 
       case 4:
+        //Radius
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
 
+        //Cos (above)
         line(this.position[0], this.circleRadius*sin(angle) + this.position[1], 
           this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
 
+        //Sin
         line(...this.position, this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         break;
 
       case 5:
+        //Radius
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
 
@@ -212,7 +214,7 @@ class Rec{
         //Radius
         line(...this.position, this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle));
         circle(this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle), this.pointSize);
- 
+
         //SEC
         line(...this.position,
           this.circleRadius/cos(angle) + this.position[0], this.position[1]);
@@ -234,7 +236,7 @@ class Rec{
         //Radius
         line(...this.position, this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle));
         circle(this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle), this.pointSize);
- 
+
         //CSC
         line(...this.position,
           this.position[0], this.circleRadius/sin(angle) + this.position[1]);
@@ -247,6 +249,7 @@ class Rec{
 
 
       case 10:
+        //Radius
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
 
