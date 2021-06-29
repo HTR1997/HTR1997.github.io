@@ -102,30 +102,25 @@ class Rec{
 
       case 2:
         push();
-        //Radius
-        stroke(...color.black);
-        line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
-        circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
-
         //Cos
         stroke(...color.blue);
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], 0 + this.position[1]);
-        //circle(this.circleRadius*cos(angle) + this.position[0], this.position[1], this.pointSize);
+        circle(this.circleRadius*cos(angle) + this.position[0], this.position[1], this.pointSize);
 
         //Sin
         stroke(...color.red);
         line(...this.position, this.position[0], this.circleRadius*sin(angle) + this.position[1]);
-        //circle(this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
+        circle(this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
+
+        //Radius
+        stroke(...color.black);
+        line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
+        circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
         pop();
         break;
 
       case 3:
         push();
-        //Radius
-        stroke(...color.black);
-        line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
-        circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
-
         //Cos
         stroke(...color.blue);
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.position[1]);
@@ -134,15 +129,19 @@ class Rec{
         stroke(...color.red);
         line(this.circleRadius*cos(angle) + this.position[0], this.position[1], 
           this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
+
+        //Radius
+        stroke(...color.black);
+        line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
+        circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
+<<<<<<< HEAD
+=======
         pop();
         break;
 
       case 4:
         push();
-        //Radius
-        stroke(...color.black);
-        line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
-        circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
+>>>>>>> Changed layering of segments to look nicer.
         //Cos (above)
         stroke(...color.blue);
         line(this.position[0], this.circleRadius*sin(angle) + this.position[1], 
@@ -151,15 +150,12 @@ class Rec{
         //Sin
         stroke(...color.red);
         line(...this.position, this.position[0], this.circleRadius*sin(angle) + this.position[1]);
-        pop();
-        break;
 
-      case 5:
-        push();
         //Radius
         stroke(...color.black);
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
+<<<<<<< HEAD
         //COS
         stroke(...color.blue);
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], 0 + this.position[1]);
@@ -170,6 +166,13 @@ class Rec{
         line(...this.position, this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
 
+=======
+        pop();
+        break;
+
+      case 5:
+        push();
+>>>>>>> Changed layering of segments to look nicer.
         //SEC
         stroke(...color.lightBlue);
         line(...this.position,
@@ -181,11 +184,7 @@ class Rec{
         line(...this.position,
           this.position[0], this.circleRadius/sin(angle) + this.position[1]);
         circle(this.position[0], this.circleRadius/sin(angle) + this.position[1], this.pointSize);
-        pop();
-        break;
-
-      case 6: 
-        push();
+        
         //COS
         stroke(...color.blue);
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], 0 + this.position[1]);
@@ -195,26 +194,40 @@ class Rec{
         stroke(...color.red);
         line(...this.position, this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
+
+        //Radius
+        stroke(...color.black);
+        line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
+        circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
+        pop();
+        break;
+
+      case 6: 
+        push();
+        //SEC
+        stroke(...color.lightBlue);
+        if (abs(angle) <= HALF_PI){
+          line(...this.position,
+            this.position[0] + this.circleRadius, this.position[1] + this.circleRadius*tan(angle));
+          //circle(this.position[0] + this.circleRadius, this.position[1] + this.circleRadius*tan(angle), this.pointSize);
+        } else {
+          line(...this.position,
+            this.position[0] - this.circleRadius, this.position[1] - this.circleRadius*tan(angle));
+          //circle(this.position[0] - this.circleRadius, this.position[1] - this.circleRadius*tan(angle), this.pointSize);
+        }
 
         //TAN
         stroke(...color.purple);
         if (abs(angle) <= HALF_PI){
           line(this.position[0] + this.circleRadius, this.position[1], 
             this.position[0] + this.circleRadius, this.position[1] + this.circleRadius*tan(angle));
+            circle(this.position[0] + this.circleRadius, this.position[1] + this.circleRadius*tan(angle), this.pointSize);
         } else {
           line(this.position[0] - this.circleRadius, this.position[1], 
             this.position[0] - this.circleRadius, this.position[1] - this.circleRadius*tan(angle));
+            circle(this.position[0] - this.circleRadius, this.position[1] - this.circleRadius*tan(angle), this.pointSize);
         }
 
-        //Radius
-        stroke(...color.black);
-        line(...this.position, this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle));
-        circle(this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle), this.pointSize);
-        pop();
-        break;
-
-      case 7:
-        push();
         //COS
         stroke(...color.blue);
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], 0 + this.position[1]);
@@ -224,26 +237,41 @@ class Rec{
         stroke(...color.red);
         line(...this.position, this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
+
+        //Radius
+        stroke(...color.black);
+        //line(...this.position, this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle));
+        push();
+        fill(...color.black);
+        circle(this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle), this.pointSize);
+        pop();
+        pop();
+        break;
+
+      case 7:
+        push();
+        //CSC
+        stroke(...color.lightRed);
+        if (angle > 0){
+          line(...this.position,
+            this.position[0] + this.circleRadius/tan(angle), this.position[1] + this.circleRadius);
+        } else {
+          line(...this.position,
+            this.position[0] - this.circleRadius/tan(angle), this.position[1] - this.circleRadius);
+        }
 
         //COTAN
         stroke(...color.lightPurple);
         if (angle > 0){
           line(this.position[0], this.position[1] + this.circleRadius,
             this.position[0] + this.circleRadius/tan(angle), this.position[1] + this.circleRadius);
+          circle(this.position[0] + this.circleRadius/tan(angle), this.position[1] + this.circleRadius, this.pointSize);
         } else {
           line(this.position[0], this.position[1] - this.circleRadius,
             this.position[0] - this.circleRadius/tan(angle), this.position[1] - this.circleRadius);
+          circle(this.position[0] - this.circleRadius/tan(angle), this.position[1] - this.circleRadius, this.pointSize);
         }
 
-        //Radius
-        stroke(...color.black);
-        line(...this.position, this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle));
-        circle(this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle), this.pointSize);
-        pop();
-        break;
-
-      case 8:
-        push();
         //COS
         stroke(...color.blue);
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], 0 + this.position[1]);
@@ -254,26 +282,30 @@ class Rec{
         line(...this.position, this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
 
+
         //Radius
         stroke(...color.black);
-        line(...this.position, this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle));
+        //line(...this.position, this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle));
+        push();
+        fill(color.black);
         circle(this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle), this.pointSize);
+        pop();
+        pop();
+        break;
+
+      case 8:
+        push();
+        //TAN
+        stroke(...color.purple);
+        line(this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle),
+          this.circleRadius/cos(angle) + this.position[0], this.position[1]);
 
         //SEC
         stroke(...color.lightBlue);
         line(...this.position,
           this.circleRadius/cos(angle) + this.position[0], this.position[1]);
         circle(this.circleRadius/cos(angle) + this.position[0], this.position[1],this.pointSize);
-
-        //TAN
-        stroke(...color.purple);
-        line(this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle),
-          this.circleRadius/cos(angle) + this.position[0], this.position[1]);
-        pop();
-        break;
-
-      case 9:
-        push();
+        
         //COS
         stroke(...color.blue);
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], 0 + this.position[1]);
@@ -283,33 +315,28 @@ class Rec{
         stroke(...color.red);
         line(...this.position, this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
-        
+
         //Radius
         stroke(...color.black);
         line(...this.position, this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle));
         circle(this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle), this.pointSize);
+
+        pop();
+        break;
+
+      case 9:
+        push();
+        //COT
+        stroke(...color.lightPurple);
+        line(this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle),
+          this.position[0], this.circleRadius/sin(angle) + this.position[1]);
 
         //CSC
         stroke(...color.lightRed);
         line(...this.position,
           this.position[0], this.circleRadius/sin(angle) + this.position[1]);
         circle(this.position[0], this.circleRadius/sin(angle) + this.position[1],this.pointSize);
-
-        //COT
-        stroke(...color.lightPurple);
-        line(this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle),
-          this.position[0], this.circleRadius/sin(angle) + this.position[1]);
-        pop();
-        break;
-
-
-      case 10:
-        push();
-        //Radius
-        stroke(...color.black);
-        line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
-        circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
-
+         
         //COS
         stroke(...color.blue);
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], 0 + this.position[1]);
@@ -319,6 +346,37 @@ class Rec{
         stroke(...color.red);
         line(...this.position, this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
+<<<<<<< HEAD
+        
+=======
+       
+>>>>>>> Changed layering of segments to look nicer.
+        //Radius
+        stroke(...color.black);
+        line(...this.position, this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle));
+        circle(this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle), this.pointSize);
+        pop();
+        break;
+
+
+      case 10:
+        push();
+        //TAN+COT
+        /*
+        stroke(...color.black);
+        line(this.circleRadius/cos(angle) + this.position[0], this.position[1],
+          this.position[0], this.circleRadius/sin(angle) + this.position[1]);
+        */
+        //TAN
+        stroke(...color.purple);
+        line(this.circleRadius/cos(angle) + this.position[0], this.position[1],
+          this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
+
+        //COT
+        stroke(...color.lightPurple);
+        line(this.position[0], this.circleRadius/sin(angle) + this.position[1],
+          this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
+
 
         //SEC
         stroke(...color.lightBlue);
@@ -331,11 +389,22 @@ class Rec{
         line(...this.position,
           this.position[0], this.circleRadius/sin(angle) + this.position[1]);
         circle(this.position[0], this.circleRadius/sin(angle) + this.position[1], this.pointSize);
+ 
+        //COS
+        stroke(...color.blue);
+        line(...this.position, this.circleRadius*cos(angle) + this.position[0], 0 + this.position[1]);
+        circle(this.circleRadius*cos(angle) + this.position[0], this.position[1], this.pointSize);
 
-        //TAN+COT
+        //SIN
+        stroke(...color.red);
+        line(...this.position, this.position[0], this.circleRadius*sin(angle) + this.position[1]);
+        circle(this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
+
+       
+        //Radius
         stroke(...color.black);
-        line(this.circleRadius/cos(angle) + this.position[0], this.position[1],
-          this.position[0], this.circleRadius/sin(angle) + this.position[1]);
+        line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
+        circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
         pop();
         break;
 
@@ -347,13 +416,13 @@ class Rec{
 }
 
 let color = {
-  black:[0],
-  red:[255,0,0],
-  blue:[0,0,255],
-  lightBlue:[50,140,170],
-  lightRed:[170,50,100],
-  purple:[135,50,170],
-  lightPurple:[170,120,180]
+  black:[0],//Radius
+  red:[255,0,0],//Sin
+  blue:[0,0,255],//Cos
+  lightBlue:[50,140,170],//Sec
+  lightRed:[170,50,100],//Csc
+  purple:[135,50,170],//Tan
+  lightPurple:[170,120,180]//Cot
 
 
 };
