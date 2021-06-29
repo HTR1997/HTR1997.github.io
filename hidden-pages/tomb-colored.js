@@ -419,13 +419,22 @@ let color = {
   black:[0],//Radius
   red:[255,0,0],//Sin
   blue:[0,0,255],//Cos
+  lightBlue:[128,128,255],//Sec
+  lightRed:[255,128,0],//Csc
+  purple:[128,0,128],//Tan
+  lightPurple:[212,155,212]//Cot
+};
+
+let old_color = {
+  black:[0],//Radius
+  red:[255,0,0],//Sin
+  blue:[0,0,255],//Cos
   lightBlue:[50,140,170],//Sec
   lightRed:[170,50,100],//Csc
   purple:[135,50,170],//Tan
   lightPurple:[170,120,180]//Cot
-
-
 };
+
 
 
 /*  COLORS
