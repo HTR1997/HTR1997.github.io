@@ -134,14 +134,11 @@ class Rec{
         stroke(...color.black);
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
-<<<<<<< HEAD
-=======
         pop();
         break;
 
       case 4:
         push();
->>>>>>> Changed layering of segments to look nicer.
         //Cos (above)
         stroke(...color.blue);
         line(this.position[0], this.circleRadius*sin(angle) + this.position[1], 
@@ -155,24 +152,11 @@ class Rec{
         stroke(...color.black);
         line(...this.position, this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.circleRadius*cos(angle) + this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
-<<<<<<< HEAD
-        //COS
-        stroke(...color.blue);
-        line(...this.position, this.circleRadius*cos(angle) + this.position[0], 0 + this.position[1]);
-        circle(this.circleRadius*cos(angle) + this.position[0], this.position[1], this.pointSize);
-
-        //SIN
-        stroke(...color.red);
-        line(...this.position, this.position[0], this.circleRadius*sin(angle) + this.position[1]);
-        circle(this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
-
-=======
         pop();
         break;
 
       case 5:
         push();
->>>>>>> Changed layering of segments to look nicer.
         //SEC
         stroke(...color.lightBlue);
         line(...this.position,
@@ -346,11 +330,6 @@ class Rec{
         stroke(...color.red);
         line(...this.position, this.position[0], this.circleRadius*sin(angle) + this.position[1]);
         circle(this.position[0], this.circleRadius*sin(angle) + this.position[1], this.pointSize);
-<<<<<<< HEAD
-        
-=======
-       
->>>>>>> Changed layering of segments to look nicer.
         //Radius
         stroke(...color.black);
         line(...this.position, this.position[0] + this.circleRadius*cos(angle), this.position[1] + this.circleRadius*sin(angle));
