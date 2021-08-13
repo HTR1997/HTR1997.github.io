@@ -16,7 +16,7 @@ header {
 }
 
 footer {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 50%;
   height: 2.5rem;
