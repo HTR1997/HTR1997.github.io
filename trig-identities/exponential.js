@@ -46,9 +46,8 @@ function draw(){
       line(0, 0, RADIUS*cos(angle), 0);
       line(0, 0, 0, RADIUS*sin(angle));
     } else {
-
-      fill([255, 5, 77]);
-      stroke([255, 5, 77]);
+      fill(96);
+      stroke(96);
       line(0, 0, RADIUS*cos(angle), RADIUS*sin(angle));
     }
     pop();
@@ -90,12 +89,8 @@ function draw(){
   }
 }
 
-function keyPressed(){
-  if (keyCode == SHIFT){
-    showComponents = !showComponents;
-  } else if (key == ' '){
-    showComponents = !showComponents;
-  }
+function mouseClicked(){
+  showComponents = !showComponents;
   return false;
 }
 
