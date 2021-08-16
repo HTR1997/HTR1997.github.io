@@ -1,5 +1,6 @@
 let canvas;
 let DIAMETER, RADIUS;
+let showComponents = true;
 const SHIFT_VALUES = [1/4, 3/8];
 const BACKGROUND_COLOR = 236;
 
@@ -31,20 +32,40 @@ function draw(){
     angle = atan2(mouseY-windowHeight*SHIFT_VALUES[1],
       mouseX-windowWidth*SHIFT_VALUES[0]);
 
-    circle(0,0, DIAMETER);
+    circle(0,0, DIAMETER);//Main circle
+
     push();
     stroke([44, 200, 160]);
-    strokeWeight(4);
-    
     fill([44, 200, 160]);
+    strokeWeight(4);
+
+    push();
+    strokeWeight(3);
+
+    if (showComponents) {
+      line(0, 0, RADIUS*cos(angle), 0);
+      line(0, 0, 0, RADIUS*sin(angle));
+    } else {
+
+      fill([255, 5, 77]);
+      stroke([255, 5, 77]);
+      line(0, 0, RADIUS*cos(angle), RADIUS*sin(angle));
+    }
+    pop();
+
+    circle(RADIUS*cos(angle), 0, 8);
+    circle(0, RADIUS*sin(angle), 8);
+    stroke(128);
+    fill(128);
+    circle(0, 0, 8);
+
     push();
     fill([255, 5, 77]);
     stroke([255, 5, 77]);
     circle(RADIUS*cos(angle), RADIUS*sin(angle), 8);
     pop();
-    circle(RADIUS*cos(angle), 0, 8);
-    circle(0, RADIUS*sin(angle), 8);
-    //circle(0, 0, 8);
+
+
     pop();
 
     push();//Text Area
@@ -69,7 +90,14 @@ function draw(){
   }
 }
 
-
+function keyPressed(){
+  if (keyCode == SHIFT){
+    showComponents = !showComponents;
+  } else if (key == ' '){
+    showComponents = !showComponents;
+  }
+  return false;
+}
 
 
 
