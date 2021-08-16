@@ -107,7 +107,6 @@ function draw(){
 
 function mouseClicked(){
   showComponents = !showComponents;
-  return false;
 }
 
 
