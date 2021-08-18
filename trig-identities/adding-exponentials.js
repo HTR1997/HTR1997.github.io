@@ -45,6 +45,7 @@ function draw(){
     push();
 
     if(showComponents){
+      //Component section
       stroke([44, 200, 160]);
       fill([44, 200, 160]);
       strokeWeight(3);
@@ -59,6 +60,7 @@ function draw(){
       circle(RADIUS*cos(angle), RADIUS*sin(angle)/2, 4);
       circle(RADIUS*cos(angle)/2, RADIUS*sin(angle), 4);
     } else {
+      //Non-component section
       stroke(96);
       fill(96);
       strokeWeight(3);
