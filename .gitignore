@@ -3,5 +3,6 @@
 
 #Ignore legacy code
 legacy_code
-
+sound-tests.*
+tree.*
 

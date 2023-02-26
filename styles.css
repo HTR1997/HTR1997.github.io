@@ -78,7 +78,7 @@ h1 {
 
 #title {
   order: 0;
-  padding-left: 5em;
+  text-align:center;
 }
 
 /*max width needs to be changed depending on what the title contains.
