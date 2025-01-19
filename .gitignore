@@ -1,0 +1,8 @@
+#Ignore mac system files
+.DS_store
+
+#Ignore legacy code
+legacy_code
+sound-tests.*
+tree.*
+
