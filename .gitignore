@@ -6,3 +6,6 @@ legacy_code
 sound-tests.*
 tree.*
 
+*.swp
+node_modules
+dist
