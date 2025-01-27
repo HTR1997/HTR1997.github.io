@@ -24,6 +24,10 @@ const radSine = new CapsuleGeometry(1, RADIUS); _m1.makeTranslation(_v1.set(0, H
 _m1.makeTranslation(_v1.set(HALF_RADIUS, 0, 0)); _m2.makeRotationZ(Math.PI / 2); _m1.multiply(_m2)
 const radCosine = new CapsuleGeometry(1, RADIUS); radCosine.attributes.position.applyMatrix4(_m1)
 const radHypotenuse = new CapsuleGeometry(1, RADIUS)
+const radSecant = new CapsuleGeometry(1, RADIUS)
+const radCosecant = new CapsuleGeometry(1, RADIUS)
+_m1.makeTranslation(_v1.set(HALF_RADIUS, 0, 0)); _m2.makeRotationZ(Math.PI / 2); _m1.multiply(_m2)
+const radTangent = new CapsuleGeometry(1, RADIUS); radSecant.attributes.position.applyMatrix4(_m1)
 
 const cursor = new Mesh(new SphereGeometry(2), new MeshNormalMaterial())
 scene.add(cursor)
@@ -37,23 +41,43 @@ const sine = new Mesh(radSine, new MeshBasicMaterial({ color: 0xcc8888 }));
 const cosine = new Mesh(radCosine, new MeshBasicMaterial({ color: 0x8888cc }))
 
 const hypotenuse = new Mesh(radHypotenuse, new MeshBasicMaterial({ color: 0xeeeeaa }))
-const exp = new Mesh()
+const expI = new Mesh(new SphereGeometry(5), new MeshBasicMaterial({ color: 0xeeeeee, depthTest: false })); expI.renderOrder = 2
+const expO = new Mesh(new SphereGeometry(3), new MeshBasicMaterial({ color: 0x333333, depthTest: false })); expO.renderOrder = 3
+const exp = new Group().add(expI, expO)
 
 
+const secant = new Mesh(radSecant, new MeshBasicMaterial({ color: 0x88cc88 }))
+const cosecant = new Mesh(radCosecant, new MeshBasicMaterial({ color: 0xaa8844 })) //0xcc88cc
+
+const tangent = new Mesh(radTangent, new MeshBasicMaterial({ color: 0xeeaa44 }))
 
 
-scene.add(unitCircle, origin, sine, cosine, hypotenuse)
+scene.add(unitCircle, origin, sine, cosine, hypotenuse, exp, secant, cosecant)
 
 
 
 // SCENE UPDATING
+let angle = 0
 const updateScene = () => {
-  const angle = Math.atan2(screenPosition.y, screenPosition.x)
+  angle = Math.atan2(screenPosition.y, screenPosition.x)
   sine.rotation.x = angle - Math.PI / 2
   cosine.rotation.y = angle
 
   hypotenuse.rotation.z = -angle + Math.PI / 2
   hypotenuse.position.set(HALF_RADIUS * Math.cos(angle), HALF_RADIUS * Math.sin(angle), 0)
+
+  exp.position.set(RADIUS * Math.cos(angle), RADIUS * Math.sin(angle), 0)
+
+  //secant.position.x = RADIUS
+  const clampedSecant = Math.min(Math.max(1 / Math.cos(angle), -5), 5)
+  secant.rotation.x = Math.cos(angle) > 0 ? 0 : Math.PI
+  secant.scale.x = Math.cos(angle) > 0 ? 1 - clampedSecant : -1 - clampedSecant
+  secant.position.x = Math.cos(angle) > 0 ? clampedSecant * RADIUS + Math.abs(Math.sin(angle)) * 2 : clampedSecant * RADIUS - Math.abs(Math.sin(angle)) * 2
+
+  const clampedCosecant = Math.min(Math.max(1 / Math.sin(angle), -5), 5)
+  cosecant.rotation.y = Math.sin(angle) > 0 ? 0 : Math.PI
+  cosecant.scale.y = Math.sin(angle) > 0 ? 1 - clampedCosecant : -1 - clampedCosecant
+  cosecant.position.y = Math.sin(angle) > 0 ? clampedCosecant * RADIUS + Math.abs(Math.sin(angle)) * 2 : clampedCosecant * RADIUS - Math.cos(Math.sin(angle)) * 2
 
 }
 
