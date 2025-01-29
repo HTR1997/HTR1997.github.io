@@ -94,10 +94,10 @@ cosecant.position.set(0, 0, -RADIUS)
 
 const tangent = makeSkinnedCapsuleMesh(0xee44ee) //0xeeaa44
 tangent.position.set(0, 0, -RADIUS)
-//const tangent = new Mesh(radTangent, new MeshBasicMaterial({ color: 0xeeaa44 }))
+const cotangent = makeSkinnedCapsuleMesh(0x44aaee)
+cotangent.position.set(0, 0, -RADIUS)
 
-
-scene.add(unitCircle, origin, sine, cosine, hypotenuse, exp, secant, cosecant, tangent)
+scene.add(unitCircle, origin, sine, cosine, hypotenuse, exp, secant, cosecant, tangent, cotangent)
 
 
 
@@ -105,10 +105,12 @@ scene.add(unitCircle, origin, sine, cosine, hypotenuse, exp, secant, cosecant, t
 let angle = 0
 let cosAngle = 1
 let sinAngle = 0
+let tanAngle = 0
 const updateScene = () => {
   angle = Math.atan2(screenPosition.y, screenPosition.x)
   cosAngle = Math.cos(angle)
   sinAngle = Math.sin(angle)
+  tanAngle = Math.tan(angle)
 
   sine.rotation.x = angle - Math.PI / 2
   cosine.rotation.y = angle
@@ -124,20 +126,16 @@ const updateScene = () => {
   secant.rotation.y = cosAngle > 0 ? 0 : Math.PI
   cosecant.rotation.x = sinAngle > 0 ? 0 : Math.PI
 
-  if (Math.abs(sinAngle) < .7) {
-    tangent.position.x = RADIUS / cosAngle
-    tangent.position.y = 0
-    tangent.skeleton.bones[1].position.x = 0
-    tangent.skeleton.bones[1].position.y = RADIUS / sinAngle / cosAngle
-    tangent.rotation.z = angle
-  } else {
-    tangent.position.x = 0
-    tangent.position.y = RADIUS / sinAngle
-    tangent.skeleton.bones[1].position.x = 0
-    tangent.skeleton.bones[1].position.y = RADIUS / sinAngle / cosAngle
-    tangent.rotation.z = angle - Math.PI
 
-  }
+  tangent.position.x = RADIUS * cosAngle
+  tangent.position.y = RADIUS * sinAngle
+  tangent.skeleton.bones[1].position.y = RADIUS * tanAngle
+  tangent.rotation.z = angle - Math.PI
+
+  cotangent.position.x = RADIUS * cosAngle
+  cotangent.position.y = RADIUS * sinAngle
+  cotangent.skeleton.bones[1].position.y = RADIUS / tanAngle
+  cotangent.rotation.z = angle
 
 }
 
