@@ -1,4 +1,4 @@
-import { Scene, PerspectiveCamera, WebGLRenderer, Mesh, BoxGeometry, MeshNormalMaterial, Color, Vector2, TorusGeometry, Group, SphereGeometry, TubeGeometry, LineCurve3, Vector3, ExtrudeGeometry, CurvePath, ShapeGeometry, Shape, MeshBasicMaterial, PlaneGeometry, OrthographicCamera, CapsuleGeometry, Matrix4, } from 'three';
+import { Scene, PerspectiveCamera, WebGLRenderer, Mesh, BoxGeometry, MeshNormalMaterial, Color, Vector2, TorusGeometry, Group, SphereGeometry, TubeGeometry, LineCurve3, Vector3, ExtrudeGeometry, CurvePath, ShapeGeometry, Shape, MeshBasicMaterial, PlaneGeometry, OrthographicCamera, CapsuleGeometry, Matrix4, SkinnedMesh, Skeleton, Bone, BufferAttribute, Uint16BufferAttribute, Float32BufferAttribute, DetachedBindMode, } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const scene = new Scene(); scene.background = new Color(0x242424);
@@ -23,14 +23,55 @@ const HALF_RADIUS = RADIUS / 2
 const radSine = new CapsuleGeometry(1, RADIUS); _m1.makeTranslation(_v1.set(0, HALF_RADIUS, 0)); radSine.attributes.position.applyMatrix4(_m1)
 _m1.makeTranslation(_v1.set(HALF_RADIUS, 0, 0)); _m2.makeRotationZ(Math.PI / 2); _m1.multiply(_m2)
 const radCosine = new CapsuleGeometry(1, RADIUS); radCosine.attributes.position.applyMatrix4(_m1)
+
 const radHypotenuse = new CapsuleGeometry(1, RADIUS)
-const radSecant = new CapsuleGeometry(1, RADIUS)
-const radCosecant = new CapsuleGeometry(1, RADIUS)
-_m1.makeTranslation(_v1.set(HALF_RADIUS, 0, 0)); _m2.makeRotationZ(Math.PI / 2); _m1.multiply(_m2)
-const radTangent = new CapsuleGeometry(1, RADIUS); radSecant.attributes.position.applyMatrix4(_m1)
+
+_m1.makeTranslation(_v1.set(100 * HALF_RADIUS, 0, 0)); _m2.makeRotationZ(Math.PI / 2); _m1.multiply(_m2)
+const radSecant = new CapsuleGeometry(1, 100 * RADIUS); radSecant.attributes.position.applyMatrix4(_m1)
+
+const radCosecant = new CapsuleGeometry(1, 100 * RADIUS); _m1.makeTranslation(_v1.set(0, 100 * HALF_RADIUS, 0)); radCosecant.attributes.position.applyMatrix4(_m1)
+
+const radTangent = new CapsuleGeometry(1, RADIUS)
 
 const cursor = new Mesh(new SphereGeometry(2), new MeshNormalMaterial())
 scene.add(cursor)
+
+const makeSkinnedCapsuleMesh = (color = 0xffffff) => {
+
+  const makeSkinnedCapsuleGeometry = () => {
+    const capGeo = new CapsuleGeometry(.5)
+    const skinIndices: number[] = []
+    const skinWeights: number[] = []
+    for (let n = 0, l = capGeo.attributes.position.count; n < l; n++) {
+      const y = (capGeo.attributes.position.getY(n))
+      const skinIndex: number = y > 0 ? 1 : 0
+      const skinWeight: number = y > 0 ? 1 : 0
+      skinIndices.push(skinIndex, 0, 0, 0)
+      skinWeights.push(1, 0, 0, 0)
+    }
+    capGeo.setAttribute('skinIndex', new Uint16BufferAttribute(skinIndices, 4))
+    capGeo.setAttribute('skinWeight', new Float32BufferAttribute(skinWeights, 4))
+    return capGeo
+  }
+
+  const addCapsuleBones = (mesh: SkinnedMesh) => {
+    const bones = [new Bone(), new Bone()]
+    bones[0].add(bones[1])
+    bones[0].position.y = -1
+    bones[1].position.y = 1
+    const skeleton = new Skeleton(bones)
+    mesh.add(skeleton.bones[0])
+    mesh.bind(skeleton)
+  }
+
+  const material = new MeshBasicMaterial({ color: color })
+  //const material = new MeshNormalMaterial()
+  const skinnedMesh = new SkinnedMesh(makeSkinnedCapsuleGeometry(), material)
+  addCapsuleBones(skinnedMesh)
+
+  return skinnedMesh
+}
+
 
 
 const unitCircle = new Mesh(new TorusGeometry(RADIUS, 2), new MeshBasicMaterial({ color: 0x999999 }))
@@ -45,42 +86,63 @@ const expI = new Mesh(new SphereGeometry(5), new MeshBasicMaterial({ color: 0xee
 const expO = new Mesh(new SphereGeometry(3), new MeshBasicMaterial({ color: 0x333333, depthTest: false })); expO.renderOrder = 3
 const exp = new Group().add(expI, expO)
 
+const secant = makeSkinnedCapsuleMesh(0x88cc88)
+secant.position.set(0, 0, -RADIUS); secant.rotateZ(-Math.PI / 2)
 
-const secant = new Mesh(radSecant, new MeshBasicMaterial({ color: 0x88cc88 }))
-const cosecant = new Mesh(radCosecant, new MeshBasicMaterial({ color: 0xaa8844 })) //0xcc88cc
+const cosecant = makeSkinnedCapsuleMesh(0xaa8844) // 0xcc88cc
+cosecant.position.set(0, 0, -RADIUS)
 
-const tangent = new Mesh(radTangent, new MeshBasicMaterial({ color: 0xeeaa44 }))
+const tangent = makeSkinnedCapsuleMesh(0xee44ee) //0xeeaa44
+tangent.position.set(0, 0, -RADIUS)
+//const tangent = new Mesh(radTangent, new MeshBasicMaterial({ color: 0xeeaa44 }))
 
 
-scene.add(unitCircle, origin, sine, cosine, hypotenuse, exp, secant, cosecant)
+scene.add(unitCircle, origin, sine, cosine, hypotenuse, exp, secant, cosecant, tangent)
 
 
 
 // SCENE UPDATING
 let angle = 0
+let cosAngle = 1
+let sinAngle = 0
 const updateScene = () => {
   angle = Math.atan2(screenPosition.y, screenPosition.x)
+  cosAngle = Math.cos(angle)
+  sinAngle = Math.sin(angle)
+
   sine.rotation.x = angle - Math.PI / 2
   cosine.rotation.y = angle
 
   hypotenuse.rotation.z = -angle + Math.PI / 2
-  hypotenuse.position.set(HALF_RADIUS * Math.cos(angle), HALF_RADIUS * Math.sin(angle), 0)
+  hypotenuse.position.set(HALF_RADIUS * cosAngle, HALF_RADIUS * sinAngle, 0)
 
-  exp.position.set(RADIUS * Math.cos(angle), RADIUS * Math.sin(angle), 0)
+  exp.position.set(RADIUS * cosAngle, RADIUS * sinAngle, 0)
 
-  //secant.position.x = RADIUS
-  const clampedSecant = Math.min(Math.max(1 / Math.cos(angle), -5), 5)
-  secant.rotation.x = Math.cos(angle) > 0 ? 0 : Math.PI
-  secant.scale.x = Math.cos(angle) > 0 ? 1 - clampedSecant : -1 - clampedSecant
-  secant.position.x = Math.cos(angle) > 0 ? clampedSecant * RADIUS + Math.abs(Math.sin(angle)) * 2 : clampedSecant * RADIUS - Math.abs(Math.sin(angle)) * 2
+  secant.skeleton.bones[1].position.y = cosAngle > 0 ? RADIUS / cosAngle : -RADIUS / cosAngle
+  cosecant.skeleton.bones[1].position.y = sinAngle > 0 ? RADIUS / sinAngle : -RADIUS / sinAngle
 
-  const clampedCosecant = Math.min(Math.max(1 / Math.sin(angle), -5), 5)
-  cosecant.rotation.y = Math.sin(angle) > 0 ? 0 : Math.PI
-  cosecant.scale.y = Math.sin(angle) > 0 ? 1 - clampedCosecant : -1 - clampedCosecant
-  cosecant.position.y = Math.sin(angle) > 0 ? clampedCosecant * RADIUS + Math.abs(Math.sin(angle)) * 2 : clampedCosecant * RADIUS - Math.cos(Math.sin(angle)) * 2
+  secant.rotation.y = cosAngle > 0 ? 0 : Math.PI
+  cosecant.rotation.x = sinAngle > 0 ? 0 : Math.PI
+
+  if (Math.abs(sinAngle) < .7) {
+    tangent.position.x = RADIUS / cosAngle
+    tangent.position.y = 0
+    tangent.skeleton.bones[1].position.x = 0
+    tangent.skeleton.bones[1].position.y = RADIUS / sinAngle / cosAngle
+    tangent.rotation.z = angle
+  } else {
+    tangent.position.x = 0
+    tangent.position.y = RADIUS / sinAngle
+    tangent.skeleton.bones[1].position.x = 0
+    tangent.skeleton.bones[1].position.y = RADIUS / sinAngle / cosAngle
+    tangent.rotation.z = angle - Math.PI
+
+  }
 
 }
 
+// 0x00aaff lovly blue
+// 0x00ffaa lovly sea green
 
 
 // LISTENER CREATION
@@ -124,9 +186,11 @@ const animate = () => {
   controls.update()
 
   renderer.render(scene, camera);
+  //console.log(renderer.info)
   requestAnimationFrame(animate)
 }
 
-renderer.setAnimationLoop(animate);
+animate()
+//renderer.setAnimationLoop(animate);
 
 
