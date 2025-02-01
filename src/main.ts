@@ -1,5 +1,7 @@
-import { Scene, PerspectiveCamera, WebGLRenderer, Mesh, BoxGeometry, MeshNormalMaterial, Color, Vector2, TorusGeometry, Group, SphereGeometry, TubeGeometry, LineCurve3, Vector3, ExtrudeGeometry, CurvePath, ShapeGeometry, Shape, MeshBasicMaterial, PlaneGeometry, OrthographicCamera, CapsuleGeometry, Matrix4, SkinnedMesh, Skeleton, Bone, BufferAttribute, Uint16BufferAttribute, Float32BufferAttribute, DetachedBindMode, } from 'three';
+import { Scene, PerspectiveCamera, WebGLRenderer, Mesh, BoxGeometry, MeshNormalMaterial, Color, Vector2, TorusGeometry, Group, SphereGeometry, TubeGeometry, LineCurve3, Vector3, ExtrudeGeometry, CurvePath, ShapeGeometry, Shape, MeshBasicMaterial, PlaneGeometry, OrthographicCamera, CapsuleGeometry, Matrix4, SkinnedMesh, Skeleton, Bone, BufferAttribute, Uint16BufferAttribute, Float32BufferAttribute, DetachedBindMode, ShaderMaterial, } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import fragment from './shaders/fragment.glsl'
+import vertex from './shaders/vertex.glsl'
 
 const scene = new Scene(); scene.background = new Color(0x242424);
 const aspectRatio = window.innerWidth / window.innerHeight
@@ -99,6 +101,13 @@ cotangent.position.set(0, 0, -RADIUS)
 
 scene.add(unitCircle, origin, sine, cosine, hypotenuse, exp, secant, cosecant, tangent, cotangent)
 
+
+const shaderMaterial = new NodeMaterial({
+  fragmentShader: fragment,
+  vertexShader: vertex,
+})
+const testPlane = new Mesh(new PlaneGeometry(100, 100), shaderMaterial)
+scene.add(testPlane)
 
 
 // SCENE UPDATING
