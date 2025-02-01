@@ -1,7 +1,10 @@
 import { Scene, PerspectiveCamera, WebGLRenderer, Mesh, BoxGeometry, MeshNormalMaterial, Color, Vector2, TorusGeometry, Group, SphereGeometry, TubeGeometry, LineCurve3, Vector3, ExtrudeGeometry, CurvePath, ShapeGeometry, Shape, MeshBasicMaterial, PlaneGeometry, OrthographicCamera, CapsuleGeometry, Matrix4, SkinnedMesh, Skeleton, Bone, BufferAttribute, Uint16BufferAttribute, Float32BufferAttribute, DetachedBindMode, ShaderMaterial, } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import fragment from './shaders/fragment.glsl'
-import vertex from './shaders/vertex.glsl'
+import { WebGPURenderer, NodeMaterial } from 'three/webgpu'
+import { Fn, vec2, vec3, vec4, uv, texture, uniform, normalLocal, mul } from 'three/tsl'
+
+//import fragment from './shaders/fragment.glsl'
+//import vertex from './shaders/vertex.glsl'
 
 const scene = new Scene(); scene.background = new Color(0x242424);
 const aspectRatio = window.innerWidth / window.innerHeight
@@ -9,7 +12,8 @@ const aspectRatio = window.innerWidth / window.innerHeight
 const cameraSize = 200;
 const camera = new OrthographicCamera(-cameraSize * aspectRatio, cameraSize * aspectRatio, cameraSize, -cameraSize, -1000, 1000);
 
-const renderer = new WebGLRenderer();
+//const renderer = new WebGLRenderer();
+const renderer = new WebGPURenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -102,10 +106,11 @@ cotangent.position.set(0, 0, -RADIUS)
 scene.add(unitCircle, origin, sine, cosine, hypotenuse, exp, secant, cosecant, tangent, cotangent)
 
 
-const shaderMaterial = new NodeMaterial({
-  fragmentShader: fragment,
-  vertexShader: vertex,
-})
+const shaderMaterial = new NodeMaterial()
+shaderMaterial.colorNode = Fn(() => {
+
+  return vec4(1, 0, .5, 1.);
+})()
 const testPlane = new Mesh(new PlaneGeometry(100, 100), shaderMaterial)
 scene.add(testPlane)
 
@@ -192,7 +197,9 @@ const animate = () => {
 
   controls.update()
 
-  renderer.render(scene, camera);
+  //renderer.render(scene, camera);
+  renderer.renderAsync(scene, camera);
+
   //console.log(renderer.info)
   requestAnimationFrame(animate)
 }
