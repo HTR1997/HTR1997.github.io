@@ -1,7 +1,7 @@
 import { Scene, PerspectiveCamera, WebGLRenderer, Mesh, BoxGeometry, MeshNormalMaterial, Color, Vector2, TorusGeometry, Group, SphereGeometry, TubeGeometry, LineCurve3, Vector3, ExtrudeGeometry, CurvePath, ShapeGeometry, Shape, MeshBasicMaterial, PlaneGeometry, OrthographicCamera, CapsuleGeometry, Matrix4, SkinnedMesh, Skeleton, Bone, BufferAttribute, Uint16BufferAttribute, Float32BufferAttribute, DetachedBindMode, ShaderMaterial, } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { WebGPURenderer, NodeMaterial } from 'three/webgpu'
-import { Fn, vec2, vec3, vec4, uv, texture, uniform, normalLocal, mul } from 'three/tsl'
+import { WebGPURenderer, NodeMaterial, NodeBuilder } from 'three/webgpu'
+import { Fn, vec2, vec3, vec4, uv, texture, uniform, normalLocal, mul, screenUV, add, } from 'three/tsl'
 
 //import fragment from './shaders/fragment.glsl'
 //import vertex from './shaders/vertex.glsl'
@@ -13,6 +13,7 @@ const cameraSize = 200;
 const camera = new OrthographicCamera(-cameraSize * aspectRatio, cameraSize * aspectRatio, cameraSize, -cameraSize, -1000, 1000);
 
 //const renderer = new WebGLRenderer();
+//const renderer = new WebGPURenderer({forceWebGL: true});
 const renderer = new WebGPURenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
@@ -108,9 +109,9 @@ scene.add(unitCircle, origin, sine, cosine, hypotenuse, exp, secant, cosecant, t
 
 const shaderMaterial = new NodeMaterial()
 shaderMaterial.colorNode = Fn(() => {
-
-  return vec4(1, 0, .5, 1.);
-})()
+  const x = add(3, 4)
+  return vec4(1, screenUV.x, .75, 1.);
+})().flipYXYZ()
 const testPlane = new Mesh(new PlaneGeometry(100, 100), shaderMaterial)
 scene.add(testPlane)
 
@@ -189,7 +190,7 @@ const controls = new OrbitControls(camera, renderer.domElement)
 
 camera.position.z = 10
 let speed = 0.05
-const animate = () => {
+const animate = async () => {
 
   cursor.position.set(screenPosition.x, screenPosition.y, 0)
 
@@ -201,6 +202,10 @@ const animate = () => {
   renderer.renderAsync(scene, camera);
 
   //console.log(renderer.info)
+  //console.log((await renderer.debug.getShaderAsync(scene, camera, testPlane)).fragmentShader)
+  //console.log((await renderer.debug.getShaderAsync(scene, camera, testPlane)).vertexShader)
+
+
   requestAnimationFrame(animate)
 }
 
