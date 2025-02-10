@@ -1,7 +1,9 @@
-import { Scene, PerspectiveCamera, WebGLRenderer, Mesh, BoxGeometry, MeshNormalMaterial, Color, Vector2, TorusGeometry, Group, SphereGeometry, TubeGeometry, LineCurve3, Vector3, ExtrudeGeometry, CurvePath, ShapeGeometry, Shape, MeshBasicMaterial, PlaneGeometry, OrthographicCamera, CapsuleGeometry, Matrix4, SkinnedMesh, Skeleton, Bone, BufferAttribute, Uint16BufferAttribute, Float32BufferAttribute, DetachedBindMode, ShaderMaterial, } from 'three';
+import { Scene, PerspectiveCamera, WebGLRenderer, Mesh, BoxGeometry, MeshNormalMaterial, Color, Vector2, TorusGeometry, Group, SphereGeometry, TubeGeometry, LineCurve3, Vector3, ExtrudeGeometry, CurvePath, ShapeGeometry, Shape, MeshBasicMaterial, PlaneGeometry, OrthographicCamera, CapsuleGeometry, Matrix4, SkinnedMesh, Skeleton, Bone, BufferAttribute, Uint16BufferAttribute, Float32BufferAttribute, DetachedBindMode, ShaderMaterial, RenderTarget, } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { WebGPURenderer, NodeMaterial, NodeBuilder } from 'three/webgpu'
-import { Fn, vec2, vec3, vec4, uv, texture, uniform, normalLocal, mul, screenUV, add, } from 'three/tsl'
+import { If, lessThan, Fn, vec2, vec3, vec4, uv, texture, uniform, normalLocal, mul, screenUV, add, } from 'three/tsl'
+import { FullScreenQuad } from 'three/examples/jsm/Addons.js';
+//import { lessThan } from 'three/src/nodes/TSL.js';
 
 //import fragment from './shaders/fragment.glsl'
 //import vertex from './shaders/vertex.glsl'
@@ -107,13 +109,39 @@ cotangent.position.set(0, 0, -RADIUS)
 scene.add(unitCircle, origin, sine, cosine, hypotenuse, exp, secant, cosecant, tangent, cotangent)
 
 
+const rt = new RenderTarget(aspectRatio * window.innerWidth, window.innerHeight)
+
 const shaderMaterial = new NodeMaterial()
 shaderMaterial.colorNode = Fn(() => {
   const x = add(3, 4)
-  return vec4(1, screenUV.x, .75, 1.);
-})().flipYXYZ()
+  const texel = texture(rt.texture)
+  return vec4(texel.xyz, 1);
+})()
 const testPlane = new Mesh(new PlaneGeometry(100, 100), shaderMaterial)
-scene.add(testPlane)
+//return vec4(rt.texture, 1.);
+//return vec4(1, screenUV.x, .75, 1.);
+
+const billMaterial = new NodeMaterial()
+billMaterial.colorNode = Fn(() => {
+  const x = texture(rt.texture)
+  const color = vec4().toVar()
+  If(x.x.lessThan(.1), () => {
+    color.assign(vec4(1, 1, 0, 1));
+  }).Else(() => {
+    color.assign(vec4(x.xyz, 1.))
+  })
+
+  return vec4(x)
+})()
+
+const testBill = new Mesh(new PlaneGeometry(100, 100), billMaterial)
+//const testBill = new Mesh(new PlaneGeometry(window.innerWidth, window.innerHeight), billMaterial)
+testBill.layers.set(1)
+//testBill.rotateZ(Math.PI / 4)
+scene.add(testBill)
+
+const fsq = new FullScreenQuad(shaderMaterial)
+//scene.add(testPlane)
 
 
 // SCENE UPDATING
@@ -172,7 +200,7 @@ const position = new Vector2(0.5, 0.5)
 const screenPosition = new Vector2(0, 0)
 const onMouseMove = (e: MouseEvent) => {
   position.x = 2 * (e.clientX / window.innerWidth) - 1;
-  position.y = -2 * (e.clientY / window.innerHeight) + 1;
+  position.y = 2 * (e.clientY / window.innerHeight) - 1;
 
   screenPosition.set(position.x * cameraSize * aspectRatio, position.y * cameraSize)
 
@@ -198,8 +226,16 @@ const animate = async () => {
 
   controls.update()
 
-  //renderer.render(scene, camera);
+
+  renderer.setRenderTarget(rt)
+
   renderer.renderAsync(scene, camera);
+  renderer.setRenderTarget(null)
+  fsq.render(renderer)
+  camera.layers.set(1)
+  //renderer.renderAsync(scene, camera);
+  camera.layers.set(0)
+
 
   //console.log(renderer.info)
   //console.log((await renderer.debug.getShaderAsync(scene, camera, testPlane)).fragmentShader)
