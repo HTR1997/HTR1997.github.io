@@ -15,8 +15,8 @@ const cameraSize = 200;
 const camera = new OrthographicCamera(-cameraSize * aspectRatio, cameraSize * aspectRatio, cameraSize, -cameraSize, -1000, 1000);
 
 //const renderer = new WebGLRenderer();
-//const renderer = new WebGPURenderer({forceWebGL: true});
-const renderer = new WebGPURenderer();
+const renderer = new WebGPURenderer({ forceWebGL: true });
+//const renderer = new WebGPURenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -110,12 +110,25 @@ scene.add(unitCircle, origin, sine, cosine, hypotenuse, exp, secant, cosecant, t
 
 
 const rt = new RenderTarget(aspectRatio * window.innerWidth, window.innerHeight)
+rt.texture.flipY = false
+rt.texture.needsPMREMUpdate = true
+rt.texture.needsUpdate = true
 
 const shaderMaterial = new NodeMaterial()
+/*
+shaderMaterial.vertexNode = Fn(() => {
+
+})()
+*/
 shaderMaterial.colorNode = Fn(() => {
-  const x = add(3, 4)
   const texel = texture(rt.texture)
-  return vec4(texel.xyz, 1);
+  const color = vec4().toVar()
+  If(screenUV.x.lessThan(.5), () => {
+    color.xyz.assign(texel.xyz)
+  }).Else(() => {
+    color.xyz.assign(texel.oneMinus().xyz)
+  })
+  return color
 })()
 const testPlane = new Mesh(new PlaneGeometry(100, 100), shaderMaterial)
 //return vec4(rt.texture, 1.);
@@ -200,7 +213,7 @@ const position = new Vector2(0.5, 0.5)
 const screenPosition = new Vector2(0, 0)
 const onMouseMove = (e: MouseEvent) => {
   position.x = 2 * (e.clientX / window.innerWidth) - 1;
-  position.y = 2 * (e.clientY / window.innerHeight) - 1;
+  position.y = -2 * (e.clientY / window.innerHeight) + 1;
 
   screenPosition.set(position.x * cameraSize * aspectRatio, position.y * cameraSize)
 
