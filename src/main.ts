@@ -1,8 +1,7 @@
 import { Scene, PerspectiveCamera, WebGLRenderer, Mesh, BoxGeometry, MeshNormalMaterial, Color, Vector2, TorusGeometry, Group, SphereGeometry, TubeGeometry, LineCurve3, Vector3, ExtrudeGeometry, CurvePath, ShapeGeometry, Shape, MeshBasicMaterial, PlaneGeometry, OrthographicCamera, CapsuleGeometry, Matrix4, SkinnedMesh, Skeleton, Bone, BufferAttribute, Uint16BufferAttribute, Float32BufferAttribute, DetachedBindMode, ShaderMaterial, RenderTarget, } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { WebGPURenderer, NodeMaterial, NodeBuilder } from 'three/webgpu'
-import { If, lessThan, Fn, vec2, vec3, vec4, uv, texture, uniform, normalLocal, mul, screenUV, add, } from 'three/tsl'
-import { FullScreenQuad } from 'three/examples/jsm/Addons.js';
+import { WebGPURenderer, NodeMaterial, NodeBuilder, QuadMesh } from 'three/webgpu'
+import { If, lessThan, Fn, vec2, vec3, vec4, uv, texture, uniform, normalLocal, mul, screenUV, add, float } from 'three/tsl'
 //import { lessThan } from 'three/src/nodes/TSL.js';
 
 //import fragment from './shaders/fragment.glsl'
@@ -13,6 +12,7 @@ const aspectRatio = window.innerWidth / window.innerHeight
 //const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const cameraSize = 200;
 const camera = new OrthographicCamera(-cameraSize * aspectRatio, cameraSize * aspectRatio, cameraSize, -cameraSize, -1000, 1000);
+//camera.projectionMatrix.multiply(new Matrix4().makeScale(1, -1, 1)) // Fix for renterTarget texture being flipped on Y axis
 
 //const renderer = new WebGLRenderer();
 const renderer = new WebGPURenderer({ forceWebGL: true });
@@ -110,51 +110,39 @@ scene.add(unitCircle, origin, sine, cosine, hypotenuse, exp, secant, cosecant, t
 
 
 const rt = new RenderTarget(aspectRatio * window.innerWidth, window.innerHeight)
-rt.texture.flipY = false
-rt.texture.needsPMREMUpdate = true
-rt.texture.needsUpdate = true
+const normalRt = new RenderTarget(aspectRatio * window.innerWidth, window.innerHeight)
 
 const shaderMaterial = new NodeMaterial()
-/*
-shaderMaterial.vertexNode = Fn(() => {
-
-})()
-*/
 shaderMaterial.colorNode = Fn(() => {
   const texel = texture(rt.texture)
   const color = vec4().toVar()
-  If(screenUV.x.lessThan(.5), () => {
-    color.xyz.assign(texel.xyz)
-  }).Else(() => {
-    color.xyz.assign(texel.oneMinus().xyz)
-  })
+  color.assign(texel.rgb)
   return color
 })()
 const testPlane = new Mesh(new PlaneGeometry(100, 100), shaderMaterial)
 //return vec4(rt.texture, 1.);
 //return vec4(1, screenUV.x, .75, 1.);
 
-const billMaterial = new NodeMaterial()
-billMaterial.colorNode = Fn(() => {
-  const x = texture(rt.texture)
+const splitScreen = Fn(() => {
+  const pos = uniform(position).add(1).mul(1 / 2)
+  const texel = texture(rt.texture)
+  const nexel = texture(normalRt.texture)
   const color = vec4().toVar()
-  If(x.x.lessThan(.1), () => {
-    color.assign(vec4(1, 1, 0, 1));
+  const cutoff = float(1).toVar()
+  If(pos.x.lessThan(screenUV.x), () => {
+    color.xyz.assign(pos.x)
+    color.xyz.assign(nexel.xyz.dot(vec3(.5, .5, 1)).mul(2).add(-1).div(4))
+    cutoff.assign(nexel.xyz.dot(vec3(.5, .5, 1)).mul(2).add(-1).div(1))
+    color.xyz.assign(float(1).div(cutoff))
   }).Else(() => {
-    color.assign(vec4(x.xyz, 1.))
+    color.xyz.assign(texel.oneMinus().xyz)
   })
+  return color
+})
 
-  return vec4(x)
-})()
 
-const testBill = new Mesh(new PlaneGeometry(100, 100), billMaterial)
-//const testBill = new Mesh(new PlaneGeometry(window.innerWidth, window.innerHeight), billMaterial)
-testBill.layers.set(1)
-//testBill.rotateZ(Math.PI / 4)
-scene.add(testBill)
-
-const fsq = new FullScreenQuad(shaderMaterial)
-//scene.add(testPlane)
+//shaderMaterial.colorNode = splitScreen()
+const quadMesh = new QuadMesh(shaderMaterial)
 
 
 // SCENE UPDATING
@@ -163,7 +151,7 @@ let cosAngle = 1
 let sinAngle = 0
 let tanAngle = 0
 const updateScene = () => {
-  angle = Math.atan2(screenPosition.y, screenPosition.x)
+  angle = Math.atan2(-screenPosition.y, screenPosition.x)
   cosAngle = Math.cos(angle)
   sinAngle = Math.sin(angle)
   tanAngle = Math.tan(angle)
@@ -213,7 +201,7 @@ const position = new Vector2(0.5, 0.5)
 const screenPosition = new Vector2(0, 0)
 const onMouseMove = (e: MouseEvent) => {
   position.x = 2 * (e.clientX / window.innerWidth) - 1;
-  position.y = -2 * (e.clientY / window.innerHeight) + 1;
+  position.y = 2 * (e.clientY / window.innerHeight) - 1;
 
   screenPosition.set(position.x * cameraSize * aspectRatio, position.y * cameraSize)
 
@@ -231,20 +219,25 @@ const controls = new OrbitControls(camera, renderer.domElement)
 
 camera.position.z = 10
 let speed = 0.05
+const meshNormalMaterial = new MeshNormalMaterial()
 const animate = async () => {
 
-  cursor.position.set(screenPosition.x, screenPosition.y, 0)
+  cursor.position.set(screenPosition.x, -screenPosition.y, 0)
 
   updateScene()
 
   controls.update()
 
-
   renderer.setRenderTarget(rt)
-
   renderer.renderAsync(scene, camera);
+
+  scene.overrideMaterial = meshNormalMaterial
+  renderer.setRenderTarget(normalRt)
+  renderer.renderAsync(scene, camera);
+  scene.overrideMaterial = null
+
   renderer.setRenderTarget(null)
-  fsq.render(renderer)
+  quadMesh.renderAsync(renderer)
   camera.layers.set(1)
   //renderer.renderAsync(scene, camera);
   camera.layers.set(0)
