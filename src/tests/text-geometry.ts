@@ -14,7 +14,6 @@ loader.load('./node_modules/three/examples/fonts/helvetiker_regular.typeface.jso
   const x = new Mesh(geometry, new MeshNormalMaterial())
   x.position.set(-cameraSize * aspectRatio + 10, cameraSize - 24, 0)
   scene.add(x)
-  console.log(x)
 })
 
 const scene = new Scene(); scene.background = new Color(0x242424);
