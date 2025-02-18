@@ -2,6 +2,38 @@ body {
   margin: 0;
 	background-color: #242424;
 	color: white;
-  cursor: none;
+  /*cursor: none;*/
 }
 
+
+#content {
+  position: absolute;
+  top: 0; width: 100%;
+  z-index: 1;
+  padding: 3em 0 0 0;
+}
+
+#c {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#red {
+  display: inline-block;
+  margin: 1em;
+  padding: 1em;
+
+  width: 200px;
+  height: 200px;
+}
+
+#blue {
+  display: inline-block;
+  margin: 1em;
+  padding: 1em;
+
+  width: 200px;
+  height: 200px;
+}

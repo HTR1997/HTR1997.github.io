@@ -1,4 +1,4 @@
-import { Scene, PerspectiveCamera, WebGLRenderer, Mesh, BoxGeometry, MeshNormalMaterial, Color, Vector2, TorusGeometry, Group, SphereGeometry, TubeGeometry, LineCurve3, Vector3, ExtrudeGeometry, CurvePath, ShapeGeometry, Shape, MeshBasicMaterial, PlaneGeometry, OrthographicCamera, CapsuleGeometry, Matrix4, SkinnedMesh, Skeleton, Bone, BufferAttribute, Uint16BufferAttribute, Float32BufferAttribute, DetachedBindMode, ShaderMaterial, RenderTarget, Vector4, DoubleSide, MeshPhongMaterial, BackSide, } from 'three';
+import { Scene, PerspectiveCamera, WebGLRenderer, Mesh, BoxGeometry, MeshNormalMaterial, Color, Vector2, TorusGeometry, Group, SphereGeometry, TubeGeometry, LineCurve3, Vector3, ExtrudeGeometry, CurvePath, ShapeGeometry, Shape, MeshBasicMaterial, PlaneGeometry, OrthographicCamera, CapsuleGeometry, Matrix4, SkinnedMesh, Skeleton, Bone, BufferAttribute, Uint16BufferAttribute, Float32BufferAttribute, DetachedBindMode, ShaderMaterial, RenderTarget, Vector4, DoubleSide, MeshPhongMaterial, BackSide, ConeGeometry, } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { WebGPURenderer, NodeMaterial, NodeBuilder, QuadMesh } from 'three/webgpu'
 import { If, lessThan, Fn, vec2, vec3, vec4, uv, texture, uniform, normalLocal, mul, screenUV, add, float, exp, length } from 'three/tsl'
@@ -9,15 +9,25 @@ import { font_helper } from './utils/text-utils'
 //import vertex from './shaders/vertex.glsl'
 
 const scene = new Scene(); scene.background = new Color(0x242424);
+const cub = new Mesh(new BoxGeometry(), new MeshNormalMaterial())
+const scene2 = new Scene(); scene2.add(cub)
 const aspectRatio = window.innerWidth / window.innerHeight
 
 const cameraSize = 200;
-const camera = new OrthographicCamera(-cameraSize * aspectRatio, cameraSize * aspectRatio, cameraSize, -cameraSize, -1000, 1000);
+//const camera = new OrthographicCamera(-cameraSize * aspectRatio, cameraSize * aspectRatio, cameraSize, -cameraSize, -1000, 1000);
+const camera = new OrthographicCamera(-cameraSize, cameraSize, cameraSize, -cameraSize, -1000, 1000);
+const camera2 = new OrthographicCamera(-1, 1, 1, -1, -1000, 1000);
+
+
+const redElement = document.getElementById('red')
+const blueElement = document.getElementById('blue')
+const canvas: HTMLCanvasElement = document.getElementById('c') as HTMLCanvasElement
 
 //const renderer = new WebGLRenderer();
-const renderer = new WebGPURenderer({ forceWebGL: true });
+const renderer = new WebGPURenderer({ forceWebGL: true, canvas: canvas });
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+//document.body.appendChild(renderer.domElement);
+renderer.init()
 
 const _v1 = new Vector3()
 const _m1 = new Matrix4()
@@ -140,6 +150,12 @@ const updateScene = () => {
   sinAngle = Math.sin(angle)
   tanAngle = Math.tan(angle)
 
+  cursor.position.set(screenPosition.x, -screenPosition.y, 0)
+  _v2.set(screenPosition.x, -screenPosition.y)
+  const _magnitude = _v2.x * _v2.x + _v2.y * _v2.y
+  _v2.set(10000 * _v2.x / _magnitude, 10000 * _v2.y / _magnitude)
+  cursor2.position.set(_v2.x, -_v2.y, 0)
+
   ex.position.set(RADIUS * cosAngle, RADIUS * sinAngle, 0)
   inv_exp.position.set(RADIUS * cosAngle, -RADIUS * sinAngle, 0)
 
@@ -194,45 +210,64 @@ document.addEventListener('mouseup', onMouseUp);
 document.addEventListener('mousemove', onMouseMove);
 document.addEventListener('wheel', onWheel);
 
-const controls = new OrbitControls(camera, renderer.domElement)
+const controls = new OrbitControls(camera, redElement)
+const controls2 = new OrbitControls(camera2, blueElement)
 // ANIMATION LOOP
 
 camera.position.z = 10
+camera2.position.z = 10
 let speed = 0.05
 const meshNormalMaterial = new MeshNormalMaterial()
 const _v2 = new Vector2()
-const animate = async () => {
 
-  cursor.position.set(screenPosition.x, -screenPosition.y, 0)
-  _v2.set(screenPosition.x, -screenPosition.y)
-  const _magnitude = _v2.x * _v2.x + _v2.y * _v2.y
-  _v2.set(10000 * _v2.x / _magnitude, 10000 * _v2.y / _magnitude)
+const _vec4 = new Vector4()
+const renderScene = (s: Scene, element: Element, c: OrthographicCamera) => {
+  const rect = element.getBoundingClientRect()
 
-  cursor2.position.set(_v2.x, -_v2.y, 0)
+  _vec4.set(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top)
+  renderer.setViewport(_vec4)
+  renderer.setScissor(_vec4)
 
-  updateScene()
 
-  controls.update()
 
   renderer.setRenderTarget(rt)
-  renderer.renderAsync(scene, camera);
-
-  scene.overrideMaterial = meshNormalMaterial
-  renderer.setRenderTarget(normalRt)
-  renderer.renderAsync(scene, camera);
-  scene.overrideMaterial = null
+  renderer.renderAsync(s, c);
+  renderer.renderAsync(s, c);
 
   renderer.setRenderTarget(null)
   quadMesh.renderAsync(renderer)
-  //cube.rotateY(Math.PI / 129)
-  //camera.layers.set(1)
-  //renderer.renderAsync(scene, camera);
-  //camera.layers.set(0)
+}
+
+const updateSize = () => {
+  const width = canvas.clientWidth
+  const height = canvas.clientHeight
+
+  if (canvas.width !== width || canvas.height !== height) {
+    renderer.setSize(width, height, false)
+  }
+}
+
+const bgColor = new Color()
+const animate = async () => {
+
+  updateScene()
+  updateSize()
+
+  canvas.style.transform = `translateY(${window.scrollY}px)`;
 
 
-  //console.log(renderer.info)
-  //console.log((await renderer.debug.getShaderAsync(scene, camera, testPlane)).fragmentShader)
-  //console.log((await renderer.debug.getShaderAsync(scene, camera, testPlane)).vertexShader)
+  //renderer.setClearColor(0xffffff)
+  renderer.setScissorTest(false)
+  renderer.clearAsync()
+
+  //renderer.setClearColor(0xe0e0e0)
+  renderer.setScissorTest(true)
+
+  //bgColor.set(0xff0000); scene.background = bgColor
+  renderScene(scene, redElement, camera)
+
+  //bgColor.set(0x0000ff); scene.background = bgColor
+  renderScene(scene2, blueElement, camera2)
 
 
   requestAnimationFrame(animate)
