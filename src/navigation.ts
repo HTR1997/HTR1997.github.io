@@ -2,8 +2,13 @@ import { Scene, PerspectiveCamera, WebGLRenderer, Mesh, BoxGeometry, MeshNormalM
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { WebGPURenderer, NodeMaterial, NodeBuilder, QuadMesh } from 'three/webgpu'
 import { If, lessThan, Fn, vec2, vec3, vec4, uv, texture, uniform, normalLocal, mul, sub, screenUV, add, float, exp, length, positionGeometry, cameraViewMatrix, cameraProjectionMatrix, normalView, distance, viewportUV } from 'three/tsl'
+
 import { font_helper } from './utils/text-utils'
 import { exp_scene } from './trig-scenes/exponential'
+import { inv_exp_scene } from './trig-scenes/inverse_exponential'
+import { cos_scene } from './trig-scenes/cosine'
+import { sin_scene } from './trig-scenes/sine'
+import { exp_cos_sin_scene } from './trig-scenes/exponential-cosine-sine'
 
 
 
@@ -21,6 +26,7 @@ const camera = new OrthographicCamera(-cameraSize, cameraSize, cameraSize, -came
 
 
 let canvas: HTMLCanvasElement
+let content: HTMLElement
 let renderer: WebGPURenderer
 
 const _v1 = new Vector3()
@@ -30,28 +36,32 @@ const _m2 = new Matrix4()
 // PAGE SETUP
 
 const elements: HTMLElement[] = []
-const scenes: Scene[] = [scene, scene2, scene3, scene2, exp_scene]
+const scenes: Scene[] = [exp_scene, inv_exp_scene, cos_scene, sin_scene, exp_cos_sin_scene]
 const pageInit = () => {
-  const c = document.createElement('canvas')
-  c.id = "c"
-  document.body.appendChild(c);
+  canvas = document.createElement('canvas')
+  canvas.id = "c"
+  document.body.appendChild(canvas);
 
-  const content = document.createElement('div')
+  content = document.createElement('div')
   content.id = "content"
   document.body.appendChild(content);
 
-  canvas = document.getElementById("c") as HTMLCanvasElement
 
-  //const content = document.getElementById("content")
-  //const renderer = new WebGLRenderer();
+  //canvas = document.getElementById("c") as HTMLCanvasElement
+  //cotent = document.getElementById("content") as HTMLCanvasElement
+
   renderer = new WebGPURenderer({ forceWebGL: true, canvas: canvas });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  //document.body.appendChild(renderer.domElement);
+
   renderer.init()
 
   for (let n = 0; n < scenes.length; n++) {
-    const scene = new Scene()
-    scene.background = new Color(0x242424)
+
+    if (n === 5) {
+      const p = document.createElement('hr')
+      p.setAttribute('hr-text', "Reciprocal Identities")
+      content.appendChild(p)
+    }
 
     const element = document.createElement('div')
     element.className = 'list-item'
@@ -60,7 +70,7 @@ const pageInit = () => {
     element.appendChild(sceneElement)
 
     const descriptionElement = document.createElement('a')
-    descriptionElement.innerText = 'Element ' + n
+    descriptionElement.innerHTML = scenes[n].userData.title
     descriptionElement.href = 'index.html'
     element.appendChild(descriptionElement)
 
@@ -150,7 +160,7 @@ let cosAngle = 1
 let sinAngle = 0
 let tanAngle = 0
 const updateScene = () => {
-  screenVector.set(-scenePosition.x, scenePosition.y)
+  screenVector.set(scenePosition.x, scenePosition.y)
   angle = Math.atan2(-screenPosition.y, screenPosition.x)
   cosAngle = Math.cos(angle)
   sinAngle = Math.sin(angle)
@@ -186,7 +196,7 @@ const onMouseUp = (e: MouseEvent) => {
 const position = new Vector2(0.5, 0.5)
 const greenPosition = new Vector2(0.5, 0.5)
 const screenPosition = new Vector2(0, 0)
-const scenePosition = new Vector4()
+const scenePosition = new Vector4(.71, .29, 0, 0)
 const _m = new Matrix4()
 const updatePosition = (e: MouseEvent) => {
 }
@@ -255,6 +265,9 @@ const bgColor = new Color()
 const screenVector = new Vector2()
 const animate = async () => {
 
+  updateSize()
+
+  canvas.style.transform = `translateY(${window.scrollY}px)`;
   updateScene()
   for (let n = 0; n < scenes.length; n++) {
     const u = scenes[n].userData.update
@@ -262,9 +275,6 @@ const animate = async () => {
       u(screenVector)
     }
   }
-  updateSize()
-
-  canvas.style.transform = `translateY(${window.scrollY}px)`;
 
 
   renderer.outputColorSpace = LinearSRGBColorSpace

@@ -2,7 +2,7 @@ import { Group, Mesh, MeshBasicMaterial } from "three"
 import { Font, FontLoader, TextGeometry } from "three/examples/jsm/Addons.js"
 
 const loader = new FontLoader()
-const TYPEFACE_PATH = './src/utils/CascadiaMonoPL_RegularInverted.json'
+const TYPEFACE_PATH = 'src/utils/CascadiaMonoPL_RegularInverted.json'
 const MAJOR_FONT = { size: 12, depth: 5 }
 const MINOR_FONT = { size: 6, depth: 5 }
 

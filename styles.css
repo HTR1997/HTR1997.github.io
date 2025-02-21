@@ -1,8 +1,32 @@
+* {
+  font-family: 'Cascadia Code', sans-serif;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+
 body {
   margin: 0;
 	background-color: #242424;
 	color: white;
   /*cursor: none;*/
+}
+
+hr {
+  border: none;
+  border-top: 2px double #cccccc;
+  overflow: visible;
+  text-align: center;
+  height: 5px;
+}
+
+hr::after {
+  background: #373737;
+  color: #cccccc;
+  content: attr(hr-text);
+  padding: 0 4px;
+  position: relative;
+  top: -13px;
 }
 
 
@@ -38,5 +62,4 @@ body {
   color: #b0b0b0;
   width: 300px;
   margin-top: 0.5em;
-  font-family: 'Cascadia Code', sans-serif;
 }
