@@ -9,6 +9,7 @@ import { inv_exp_scene } from './trig-scenes/inverse_exponential'
 import { cos_scene } from './trig-scenes/cosine'
 import { sin_scene } from './trig-scenes/sine'
 import { exp_cos_sin_scene } from './trig-scenes/exponential-cosine-sine'
+import { exp_arc_scene } from './trig-scenes/exponential-arc'
 
 
 
@@ -36,7 +37,7 @@ const _m2 = new Matrix4()
 // PAGE SETUP
 
 const elements: HTMLElement[] = []
-const scenes: Scene[] = [exp_scene, inv_exp_scene, cos_scene, sin_scene, exp_cos_sin_scene]
+const scenes: Scene[] = [exp_scene, inv_exp_scene, cos_scene, sin_scene, exp_cos_sin_scene, exp_arc_scene]
 const pageInit = () => {
   canvas = document.createElement('canvas')
   canvas.id = "c"
