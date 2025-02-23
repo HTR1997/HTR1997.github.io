@@ -3,7 +3,7 @@ import { font_helper } from '../utils/text-utils'
 
 const scene = new Scene(); scene.background = new Color(0x242424);
 
-scene.userData.title = 'tanθ'
+scene.userData.title = 'secθ = 1 / cosθ'
 //scene.userData.title = 'tan<sup>2</sup>θ = sec<sup>2</sup>θ * jsinθ'
 
 const _v1 = new Vector3()
@@ -25,13 +25,13 @@ const origin = new Mesh(new SphereGeometry(3), new MeshBasicMaterial({ color: 0x
 const ex = new Mesh(new SphereGeometry(3), new MeshBasicMaterial({ color: 0x111111, depthTest: false })); ex.renderOrder = 2
 const cos = new Mesh(new SphereGeometry(3), new MeshBasicMaterial({ color: 0x8888ff, depthTest: false })); cos.renderOrder = 2
 const sin = new Mesh(new SphereGeometry(3), new MeshBasicMaterial({ color: 0xff8888, depthTest: false })); sin.renderOrder = 2
-const tan = new Mesh(new SphereGeometry(3), new MeshBasicMaterial({ color: 0x88ff88, depthTest: false })); tan.renderOrder = 2
+
 const sec = new Mesh(new SphereGeometry(3), new MeshBasicMaterial({ color: 0xffff88, depthTest: false })); sec.renderOrder = 2
 
 const exp_text = font_helper('e', 'jθ')
 const cos_text = font_helper('cosθ')
 const sin_text = font_helper('jsinθ')
-const tan_text = font_helper('tanθ')
+
 const sec_text = font_helper('secθ')
 
 
@@ -39,11 +39,10 @@ const sec_text = font_helper('secθ')
 ex.add(exp_text)
 cos.add(cos_text)
 sin.add(sin_text)
-tan.add(tan_text)
 sec.add(sec_text)
 
 scene.add(unitCircle, origin)
-scene.add(ex, cos, sin, tan, sec)
+scene.add(ex, cos, sin, sec)
 
 
 
@@ -96,15 +95,12 @@ cos_lin.skeleton.bones[1].position.set(0, RADIUS, 0)
 const sin_lin = makeSkinnedCapsuleMesh(0xffbbbb, .9)
 sin_lin.skeleton.bones[0].position.set(0, 0, 0)
 sin_lin.skeleton.bones[1].position.set(0, RADIUS, 0)
-const tan_lin = makeSkinnedCapsuleMesh(0xbbffbb, .9)
-tan_lin.skeleton.bones[0].position.set(0, 0, 0)
-tan_lin.skeleton.bones[1].position.set(0, RADIUS, 0)
 
 const sec_lin = makeSkinnedCapsuleMesh(0xffffbb, .5)
 sec_lin.skeleton.bones[0].position.set(0, 0, 0)
 sec_lin.skeleton.bones[1].position.set(0, RADIUS, 0)
 
-scene.add(radius, cos_lin, sin_lin, tan_lin, sec_lin)
+scene.add(radius, cos_lin, sin_lin, sec_lin)
 
 
 // SCENE UPDATING
@@ -125,7 +121,7 @@ const updateScene = (screenVector: Vector2) => {
 
   sec.position.set(RADIUS / cosAngle, 0, 0)
 
-  tan.position.set((ex.position.x + sec.position.x) / 2, (ex.position.y + sec.position.y) / 2, 0)
+
 
   radius.rotation.z = angle - Math.PI / 2
 
@@ -136,11 +132,6 @@ const updateScene = (screenVector: Vector2) => {
   cos_lin.rotation.z = cosAngle > 0 ? -Math.PI / 2 : Math.PI / 2
   cos_lin.skeleton.bones[1].position.y = Math.abs(RADIUS * cosAngle)
 
-  tan_lin.position.x = RADIUS * cosAngle
-  tan_lin.position.y = RADIUS * sinAngle
-  tan_lin.rotation.z = tanAngle < 0 ? angle : angle - Math.PI
-  tan_lin.skeleton.bones[1].position.y = Math.abs(RADIUS * tanAngle)
-
 
   sec_lin.rotation.z = cosAngle > 0 ? -Math.PI / 2 : Math.PI / 2
   sec_lin.skeleton.bones[1].position.y = RADIUS / Math.abs(cosAngle)
@@ -148,5 +139,5 @@ const updateScene = (screenVector: Vector2) => {
 }
 scene.userData.update = updateScene
 
-const tan_sec_scene = scene
-export { tan_sec_scene }
+const sec_scene = scene
+export { sec_scene }

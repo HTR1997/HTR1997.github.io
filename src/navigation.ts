@@ -12,6 +12,8 @@ import { exp_cos_sin_scene } from './trig-scenes/exponential-cosine-sine'
 import { exp_arc_scene } from './trig-scenes/exponential-arc'
 import { tan_scene } from './trig-scenes/tangent'
 import { tan_sec_scene } from './trig-scenes/tangent-secant'
+import { sec_scene } from './trig-scenes/secant'
+import { csc_scene } from './trig-scenes/cosecant'
 
 
 
@@ -39,7 +41,8 @@ const _m2 = new Matrix4()
 // PAGE SETUP
 
 const elements: HTMLElement[] = []
-const scenes: Scene[] = [exp_scene, inv_exp_scene, cos_scene, sin_scene, exp_cos_sin_scene, exp_arc_scene, tan_scene, tan_sec_scene]
+let scenes: Scene[] = [exp_scene, inv_exp_scene, cos_scene, sin_scene, exp_cos_sin_scene, exp_arc_scene, tan_scene, sec_scene, csc_scene, tan_sec_scene]
+//scenes = scenes.slice(-3)
 const pageInit = () => {
   canvas = document.createElement('canvas')
   canvas.id = "c"
