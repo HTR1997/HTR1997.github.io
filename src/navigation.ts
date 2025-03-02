@@ -14,6 +14,12 @@ import { tan_scene } from './trig-scenes/tangent'
 import { tan_sec_scene } from './trig-scenes/tangent-secant'
 import { sec_scene } from './trig-scenes/secant'
 import { csc_scene } from './trig-scenes/cosecant'
+import { cot_scene } from './trig-scenes/cotangent'
+import { pyt_cos_sin_scene } from './trig-scenes/pythagorean-cosine-sine'
+import { pyt_tan_sec_scene } from './trig-scenes/pythagorean-tangent-secant'
+import { pyt_cot_csc_scene } from './trig-scenes/pythagorean-cotangent-cosecant'
+import { pyt_sec_cos_sin_tan_scene } from './trig-scenes/pythagorean-secant-cosine-sine-tangent'
+import { pyt_all_scene } from './trig-scenes/pythagorean-all.ts'
 
 
 
@@ -41,7 +47,14 @@ const _m2 = new Matrix4()
 // PAGE SETUP
 
 const elements: HTMLElement[] = []
-let scenes: Scene[] = [exp_scene, inv_exp_scene, cos_scene, sin_scene, exp_cos_sin_scene, exp_arc_scene, tan_scene, sec_scene, csc_scene, tan_sec_scene]
+let scenes: Scene[] = []
+let basic_scenes = [exp_scene, inv_exp_scene, cos_scene, sin_scene, exp_cos_sin_scene, exp_arc_scene, tan_scene]
+let reciprocal_scenes = [sec_scene, csc_scene, cot_scene]
+let pythagorean_scenes = [pyt_cos_sin_scene, pyt_tan_sec_scene, pyt_cot_csc_scene, pyt_sec_cos_sin_tan_scene]
+let other_scenes = [pyt_all_scene]
+
+scenes = scenes.concat(basic_scenes, reciprocal_scenes, pythagorean_scenes, other_scenes)
+
 //scenes = scenes.slice(-3)
 const pageInit = () => {
   canvas = document.createElement('canvas')
@@ -63,9 +76,21 @@ const pageInit = () => {
 
   for (let n = 0; n < scenes.length; n++) {
 
-    if (n === 7) {
+    if (n === basic_scenes.length) {
       const p = document.createElement('hr')
       p.setAttribute('hr-text', "Reciprocal Identities")
+      content.appendChild(p)
+    }
+
+    if (n === basic_scenes.length + reciprocal_scenes.length) {
+      const p = document.createElement('hr')
+      p.setAttribute('hr-text', "Pythagorean Identities")
+      content.appendChild(p)
+    }
+
+    if (n === basic_scenes.length + reciprocal_scenes.length + pythagorean_scenes.length) {
+      const p = document.createElement('hr')
+      p.setAttribute('hr-text', "Other")
       content.appendChild(p)
     }
 
@@ -213,7 +238,6 @@ const onMouseMove = (e: MouseEvent) => {
   screenPosition.set(position.x * cameraSize * aspectRatio / camera.zoom, position.y * cameraSize / camera.zoom)
 
   scenePosition.set(camera.position.x, camera.position.y, camera.position.z, 0)
-  scenePosition.set(camera.position.x, camera.position.y, camera.position.z, 0)
   scenePosition.x += screenPosition.x
   scenePosition.y -= screenPosition.y
 }
@@ -223,7 +247,6 @@ const onWheel = (e: WheelEvent) => {
 
   screenPosition.set(position.x * cameraSize * aspectRatio / camera.zoom, position.y * cameraSize / camera.zoom)
 
-  scenePosition.set(camera.position.x, camera.position.y, camera.position.z, 0)
   scenePosition.set(camera.position.x, camera.position.y, camera.position.z, 0)
   scenePosition.x += screenPosition.x
   scenePosition.y -= screenPosition.y
