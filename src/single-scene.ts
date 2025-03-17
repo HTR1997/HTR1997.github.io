@@ -1,16 +1,16 @@
-import { Scene, PerspectiveCamera, WebGLRenderer, Mesh, BoxGeometry, MeshNormalMaterial, Color, Vector2, Vector4, TorusGeometry, Group, SphereGeometry, TubeGeometry, LineCurve3, Vector3, ExtrudeGeometry, CurvePath, ShapeGeometry, Shape, MeshBasicMaterial, PlaneGeometry, OrthographicCamera, CapsuleGeometry, Matrix4, SkinnedMesh, Skeleton, Bone, BufferAttribute, Uint16BufferAttribute, Float32BufferAttribute, DetachedBindMode, ShaderMaterial, RenderTarget, } from 'three';
+import { Scene, PerspectiveCamera, WebGLRenderer, Mesh, BoxGeometry, MeshNormalMaterial, Color, Vector2, Vector4, TorusGeometry, Group, SphereGeometry, TubeGeometry, LineCurve3, Vector3, ExtrudeGeometry, CurvePath, ShapeGeometry, Shape, MeshBasicMaterial, PlaneGeometry, OrthographicCamera, CapsuleGeometry, Matrix4, SkinnedMesh, Skeleton, Bone, BufferAttribute, Uint16BufferAttribute, Float32BufferAttribute, DetachedBindMode, ShaderMaterial, RenderTarget, DoubleSide, } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { WebGPURenderer, NodeMaterial, NodeBuilder, QuadMesh } from 'three/webgpu'
 import { If, lessThan, Fn, vec2, vec3, vec4, uv, texture, uniform, normalLocal, mul, screenUV, add, float } from 'three/tsl'
-import { exp_sum_scene } from './tests/exponential-sum'
-import { cot_scene } from './trig-scenes/cotangent'
-import { tan_scene } from './trig-scenes/tangent'
+import { spiral_sum_scene } from './tests/spiral-sum'
+import { exp_max_scene } from './tests/exp-max'
+import { arc_spiral_sum_scene } from './tests/arc-spiral-sum'
 //import { lessThan } from 'three/src/nodes/TSL.js';
 
 //import fragment from './shaders/fragment.glsl'
 //import vertex from './shaders/vertex.glsl'
 
-const scene = cot_scene
+const scene = exp_max_scene
 //const scene = new Scene(); scene.background = new Color(0x242424);
 const aspectRatio = window.innerWidth / window.innerHeight
 //const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -34,7 +34,7 @@ const RADIUS = 100
 const HALF_RADIUS = RADIUS / 2
 
 const cursor = new Mesh(new SphereGeometry(2), new MeshNormalMaterial())
-scene.add(cursor)
+//scene.add(cursor)
 
 
 
@@ -45,14 +45,17 @@ let cosAngle = 1
 let sinAngle = 0
 let tanAngle = 0
 const updateScene = () => {
-  screenVector.set(scenePosition.x, scenePosition.y)
+  screenVector.set(position.x, position.y)
   angle = Math.atan2(-screenPosition.y, screenPosition.x)
   cosAngle = Math.cos(angle)
   sinAngle = Math.sin(angle)
   tanAngle = Math.tan(angle)
 
+  scene.userData.update(screenVector)
 
 }
+scene.add(new Mesh(new SphereGeometry(), new MeshBasicMaterial()))
+
 
 
 // 0x00aaff lovly blue
@@ -63,7 +66,7 @@ const updateScene = () => {
 
 let clicking = false
 const onMouseDown = (e: MouseEvent) => {
-  scene.userData.toggleText()
+  //scene.userData.toggleText()
   clicking = true
 }
 const onMouseUp = (e: MouseEvent) => {
@@ -74,7 +77,6 @@ const position = new Vector2(0.5, 0.5)
 const screenPosition = new Vector2(0, 0)
 const scenePosition = new Vector4(.71, .29, 0, 0)
 const onMouseMove = (e: MouseEvent) => {
-  screenVector.set(scenePosition.x, scenePosition.y)
   position.x = 2 * (e.clientX / window.innerWidth) - 1;
   position.y = 2 * (e.clientY / window.innerHeight) - 1;
 
@@ -89,6 +91,11 @@ const onMouseMove = (e: MouseEvent) => {
 
 }
 
+const p = new Mesh(new PlaneGeometry(100, 100), new MeshBasicMaterial({ color: 0x333333, side: DoubleSide }))
+p.rotateY(Math.PI)
+p.position.z = -  Math.PI / 3 - Math.PI * 2
+//scene.add(p)
+
 document.addEventListener('mousedown', onMouseDown);
 document.addEventListener('mouseup', onMouseUp);
 document.addEventListener('mousemove', onMouseMove);
@@ -96,21 +103,25 @@ document.addEventListener('mousemove', onMouseMove);
 const controls = new OrbitControls(camera, renderer.domElement)
 // ANIMATION LOOP
 
-camera.position.z = 10
+camera.position.set(-4, 4, 10)
+controls.update()
+
 let speed = 0.05
 const meshNormalMaterial = new MeshNormalMaterial()
-const screenVector = new Vector2()
+const screenVector = new Vector2(0, 0)
 const animate = async () => {
 
   cursor.position.set(screenPosition.x, -screenPosition.y, 0)
 
   updateScene()
 
+
   controls.update()
+
+
 
   renderer.render(scene, camera)
 
-  scene.userData.update(screenVector)
 
 }
 
