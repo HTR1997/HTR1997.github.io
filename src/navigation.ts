@@ -38,7 +38,7 @@ const camera = new OrthographicCamera(-cameraSize, cameraSize, cameraSize, -came
 
 let canvas: HTMLCanvasElement
 let content: HTMLElement
-let renderer: WebGPURenderer
+let renderer: WebGLRenderer
 
 const _v1 = new Vector3()
 const _m1 = new Matrix4()
@@ -51,7 +51,8 @@ let scenes: Scene[] = []
 let basic_scenes = [exp_scene, inv_exp_scene, cos_scene, sin_scene, exp_cos_sin_scene, exp_arc_scene, tan_scene]
 let reciprocal_scenes = [sec_scene, csc_scene, cot_scene]
 let pythagorean_scenes = [pyt_cos_sin_scene, pyt_tan_sec_scene, pyt_cot_csc_scene, pyt_sec_cos_sin_tan_scene]
-let other_scenes = [pyt_all_scene]
+let other_scenes = [pyt_all_scene, tan_sec_scene]
+
 
 scenes = scenes.concat(basic_scenes, reciprocal_scenes, pythagorean_scenes, other_scenes)
 
@@ -69,10 +70,10 @@ const pageInit = () => {
   //canvas = document.getElementById("c") as HTMLCanvasElement
   //cotent = document.getElementById("content") as HTMLCanvasElement
 
-  renderer = new WebGPURenderer({ forceWebGL: true, canvas: canvas });
+  //renderer = new WebGPURenderer({ forceWebGL: true, canvas: canvas });
+  renderer = new WebGLRenderer({ canvas: canvas, antialias: true })
   renderer.setSize(window.innerWidth, window.innerHeight);
 
-  renderer.init()
 
   for (let n = 0; n < scenes.length; n++) {
 
@@ -268,13 +269,13 @@ const _vec4 = new Vector4()
 const renderScene = (n: number) => {
   const element = elements[n]
   const rect = element.getBoundingClientRect()
-  _vec4.set(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top)
+  _vec4.set(rect.left, renderer.domElement.clientHeight - rect.bottom, rect.right - rect.left, rect.bottom - rect.top)
   renderer.setViewport(_vec4)
   renderer.setScissor(_vec4)
 
   const s = scenes[n]
   const c = camera
-  renderer.renderAsync(s, c);
+  renderer.render(s, c);
   //renderer.renderAsync(s, c);
 
   //renderer.setRenderTarget(null)
@@ -297,7 +298,19 @@ const animate = async () => {
   updateSize()
 
   canvas.style.transform = `translateY(${window.scrollY}px)`;
+
+
+  renderer.outputColorSpace = LinearSRGBColorSpace
+  renderer.setClearColor(0x808080)
+  renderer.setScissorTest(false)
+  renderer.clear()
+  renderer.setClearColor(0x242424)
+  renderer.setScissorTest(true)
+  renderer.outputColorSpace = SRGBColorSpace
+
+
   updateScene()
+
   for (let n = 0; n < scenes.length; n++) {
     const u = scenes[n].userData.update
     if (u !== undefined) {
@@ -306,13 +319,6 @@ const animate = async () => {
   }
 
 
-  renderer.outputColorSpace = LinearSRGBColorSpace
-  renderer.setClearColor(0x808080)
-  renderer.setScissorTest(false)
-  renderer.clearAsync()
-  renderer.setClearColor(0x242424)
-  renderer.setScissorTest(true)
-  renderer.outputColorSpace = SRGBColorSpace
 
   for (let n = 0; n < scenes.length; n++) {
     renderScene(n)
