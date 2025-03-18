@@ -1,9 +1,13 @@
 import { Scene, Mesh, MeshNormalMaterial, Color, Vector2, TorusGeometry, SphereGeometry, Vector3, MeshBasicMaterial, Matrix4, BackSide, CapsuleGeometry, Uint16BufferAttribute, Float32BufferAttribute, SkinnedMesh, Bone, Skeleton } from 'three';
 import { font_helper } from '../utils/text-utils'
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+import { RADIUS_LINE_COLOR, COSINE_LINE_COLOR, SINE_LINE_COLOR, TANGENT_LINE_COLOR, SECANT_LINE_COLOR, COTANGENT_LINE_COLOR, COSECANT_LINE_COLOR, CHORD_LINE_COLOR } from '../constants'
 
 const scene = new Scene(); scene.background = new Color(0x242424);
 
-scene.userData.title = 'tanθ'
+scene.userData.title = 'all of them'
 //scene.userData.title = 'tan<sup>2</sup>θ = sec<sup>2</sup>θ * jsinθ'
 
 const _v1 = new Vector3()
@@ -53,75 +57,19 @@ scene.add(ex, cos, sin, tan, cot, sec, csc)
 
 
 
-const makeSkinnedCapsuleMesh = (color = 0xffffff, cap_radius = .75) => {
+const cos_lin = new Line2(new LineGeometry().setPositions([0, 0, 0, RADIUS, 0, 0]), new LineMaterial({ color: COSINE_LINE_COLOR, linewidth: 2 }))
+const sin_lin = new Line2(new LineGeometry().setPositions([0, 0, 0, 0, 0, 0]), new LineMaterial({ color: SINE_LINE_COLOR, linewidth: 2 }))
 
-  const makeSkinnedCapsuleGeometry = () => {
-    const capGeo = new CapsuleGeometry(cap_radius)
-    const skinIndices: number[] = []
-    const skinWeights: number[] = []
-    for (let n = 0, l = capGeo.attributes.position.count; n < l; n++) {
-      const y = (capGeo.attributes.position.getY(n))
-      const skinIndex: number = y > 0 ? 1 : 0
-      const skinWeight: number = y > 0 ? 1 : 0
-      skinIndices.push(skinIndex, 0, 0, 0)
-      skinWeights.push(1, 0, 0, 0)
-    }
-    capGeo.setAttribute('skinIndex', new Uint16BufferAttribute(skinIndices, 4))
-    capGeo.setAttribute('skinWeight', new Float32BufferAttribute(skinWeights, 4))
-    return capGeo
-  }
+const tan_lin = new Line2(new LineGeometry().setPositions([0, 0, 0, 0, 0, 0]), new LineMaterial({ color: TANGENT_LINE_COLOR, linewidth: 2 }))
+const sec_lin = new Line2(new LineGeometry().setPositions([0, 0, 0, RADIUS, 0, 0]), new LineMaterial({ color: SECANT_LINE_COLOR, linewidth: 2 }))
 
-  const addCapsuleBones = (mesh: SkinnedMesh) => {
-    const bones = [new Bone(), new Bone()]
-    bones[0].add(bones[1])
-    bones[0].position.y = -1
-    bones[1].position.y = 1
-    const skeleton = new Skeleton(bones)
-    mesh.add(skeleton.bones[0])
-    mesh.bind(skeleton)
-  }
+const cot_lin = new Line2(new LineGeometry().setPositions([0, 0, 0, 0, 0, 0]), new LineMaterial({ color: COTANGENT_LINE_COLOR, linewidth: 2 }))
+const csc_lin = new Line2(new LineGeometry().setPositions([0, 0, 0, 0, 0, 0]), new LineMaterial({ color: COSECANT_LINE_COLOR, linewidth: 2 }))
 
-  const material = new MeshBasicMaterial({ color: color })
-  //const material = new MeshNormalMaterial()
-  const skinnedMesh = new SkinnedMesh(makeSkinnedCapsuleGeometry(), material)
-  addCapsuleBones(skinnedMesh)
+const chord_lin = new Line2(new LineGeometry().setPositions([0, 0, 0, 0, 0, 0]), new LineMaterial({ color: CHORD_LINE_COLOR, linewidth: 1 }))
 
-  return skinnedMesh
-}
-
-// 0xbbffbb
-// Do .9 radius for vertical lines (so the thickeness looks the same)
-const radius = makeSkinnedCapsuleMesh(0x111111)
-radius.skeleton.bones[0].position.set(0, 0, 0)
-radius.skeleton.bones[1].position.set(0, RADIUS, 0)
-const cos_lin = makeSkinnedCapsuleMesh(0xbbbbff)
-cos_lin.rotation.z = -Math.PI / 2
-cos_lin.skeleton.bones[0].position.set(0, 0, 0)
-cos_lin.skeleton.bones[1].position.set(0, RADIUS, 0)
-
-const sin_lin = makeSkinnedCapsuleMesh(0xffbbbb, .9)
-sin_lin.skeleton.bones[0].position.set(0, 0, 0)
-sin_lin.skeleton.bones[1].position.set(0, RADIUS, 0)
-
-const tan_lin = makeSkinnedCapsuleMesh(0xbbffbb, .9)
-tan_lin.skeleton.bones[0].position.set(0, 0, 0)
-tan_lin.skeleton.bones[1].position.set(0, RADIUS, 0)
-
-const cot_lin = makeSkinnedCapsuleMesh(0xffbbff, .9)
-cot_lin.skeleton.bones[0].position.set(0, 0, 0)
-cot_lin.skeleton.bones[1].position.set(0, RADIUS, 0)
-
-const sec_lin = makeSkinnedCapsuleMesh(0xffffbb, .5)
-sec_lin.skeleton.bones[0].position.set(0, 0, 0)
-sec_lin.skeleton.bones[1].position.set(0, RADIUS, 0)
-
-const csc_lin = makeSkinnedCapsuleMesh(0xbbffff, .5)
-csc_lin.skeleton.bones[0].position.set(0, 0, 0)
-csc_lin.skeleton.bones[1].position.set(0, RADIUS, 0)
-
-const chord_lin = makeSkinnedCapsuleMesh(0xbbbbbb, .5)
-chord_lin.skeleton.bones[0].position.set(0, 0, 0)
-chord_lin.skeleton.bones[1].position.set(0, RADIUS, 0)
+cos_lin.position.z = 10
+sin_lin.position.z = 10
 
 scene.add(cos_lin, sin_lin, tan_lin, cot_lin, sec_lin, csc_lin)
 scene.add(chord_lin)
@@ -149,35 +97,33 @@ const updateScene = (screenVector: Vector2) => {
   tan.position.set((ex.position.x + sec.position.x) / 2, (ex.position.y + sec.position.y) / 2, 0)
   cot.position.set((ex.position.x + csc.position.x) / 2, (ex.position.y + csc.position.y) / 2, 0)
 
-  radius.rotation.z = angle - Math.PI / 2
 
-  chord_lin.rotation.z = -angle + Math.PI / 2
-  chord_lin.position.x = RADIUS * cosAngle
+  chord_lin.geometry.getAttribute('instanceStart').setX(0, cosAngle * RADIUS)
+  chord_lin.geometry.getAttribute('instanceEnd').setY(0, RADIUS * sinAngle)
+  chord_lin.geometry.getAttribute('instanceStart').needsUpdate = true
+  chord_lin.geometry.getAttribute('instanceEnd').needsUpdate = true
 
-  //sin_lin.position.x = cos.position.x
-  sin_lin.rotation.z = sinAngle > 0 ? 0 : Math.PI
-  sin_lin.skeleton.bones[1].position.y = Math.abs(RADIUS * sinAngle)
+  sin_lin.geometry.getAttribute('instanceEnd').setY(0, sinAngle * RADIUS)
+  sin_lin.geometry.getAttribute('instanceEnd').needsUpdate = true
 
-  cos_lin.rotation.z = cosAngle > 0 ? -Math.PI / 2 : Math.PI / 2
-  cos_lin.skeleton.bones[1].position.y = Math.abs(RADIUS * cosAngle)
+  cos_lin.geometry.getAttribute('instanceEnd').setX(0, cosAngle * RADIUS)
+  cos_lin.geometry.getAttribute('instanceEnd').needsUpdate = true
 
-  tan_lin.position.x = RADIUS * cosAngle
-  tan_lin.position.y = RADIUS * sinAngle
-  tan_lin.rotation.z = tanAngle < 0 ? angle : angle - Math.PI
-  tan_lin.skeleton.bones[1].position.y = Math.abs(RADIUS * tanAngle)
+  sec_lin.geometry.getAttribute('instanceEnd').setX(0, RADIUS / cosAngle)
+  sec_lin.geometry.getAttribute('instanceEnd').needsUpdate = true
 
-  cot_lin.position.x = RADIUS * cosAngle
-  cot_lin.position.y = RADIUS * sinAngle
-  cot_lin.rotation.z = tanAngle > 0 ? angle : angle - Math.PI
-  cot_lin.skeleton.bones[1].position.y = Math.abs(RADIUS / tanAngle)
+  csc_lin.geometry.getAttribute('instanceEnd').setY(0, RADIUS / sinAngle)
+  csc_lin.geometry.getAttribute('instanceEnd').needsUpdate = true
 
+  tan_lin.geometry.getAttribute('instanceStart').setXY(0, cosAngle * RADIUS, sinAngle * RADIUS)
+  tan_lin.geometry.getAttribute('instanceEnd').setX(0, RADIUS / cosAngle)
+  tan_lin.geometry.getAttribute('instanceStart').needsUpdate = true
+  tan_lin.geometry.getAttribute('instanceEnd').needsUpdate = true
 
-  sec_lin.rotation.z = cosAngle > 0 ? -Math.PI / 2 : Math.PI / 2
-  sec_lin.skeleton.bones[1].position.y = RADIUS / Math.abs(cosAngle)
-
-  csc_lin.rotation.z = sinAngle > 0 ? 0 : Math.PI
-  csc_lin.skeleton.bones[1].position.y = RADIUS / Math.abs(sinAngle)
-
+  cot_lin.geometry.getAttribute('instanceStart').setXY(0, cosAngle * RADIUS, sinAngle * RADIUS)
+  cot_lin.geometry.getAttribute('instanceEnd').setY(0, RADIUS / sinAngle)
+  cot_lin.geometry.getAttribute('instanceStart').needsUpdate = true
+  cot_lin.geometry.getAttribute('instanceEnd').needsUpdate = true
 
 }
 scene.userData.update = updateScene

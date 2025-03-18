@@ -1,4 +1,5 @@
 export const RADIUS_LINE_COLOR = 0x111111
+export const CHORD_LINE_COLOR = 0xbbbbbb
 
 export const COSINE_LINE_COLOR = 0xbbbbff
 export const SINE_LINE_COLOR = 0xffbbbb
