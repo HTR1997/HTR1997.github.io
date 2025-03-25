@@ -1,5 +1,9 @@
 import { Scene, Mesh, MeshNormalMaterial, Color, Vector2, TorusGeometry, SphereGeometry, Vector3, MeshBasicMaterial, Matrix4, BackSide } from 'three';
 import { font_helper } from '../utils/text-utils'
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+import { RADIUS_LINE_COLOR, COSINE_LINE_COLOR, SINE_LINE_COLOR, TANGENT_LINE_COLOR, SECANT_LINE_COLOR, COTANGENT_LINE_COLOR, COSECANT_LINE_COLOR, CHORD_LINE_COLOR } from '../constants'
 
 const scene = new Scene(); scene.background = new Color(0x242424);
 
@@ -46,6 +50,11 @@ scene.add(unitCircle, origin)
 scene.add(ex, neg_inv_exp, inv_exp, sin)
 
 
+const chord_lin = new Line2(new LineGeometry().setPositions([0, 0, 0, 0, 0, 0]), new LineMaterial({ color: CHORD_LINE_COLOR, linewidth: 1 }))
+const chord2_lin = new Line2(new LineGeometry().setPositions([0, 0, 0, 0, 0, 0]), new LineMaterial({ color: CHORD_LINE_COLOR, linewidth: 1 }))
+
+scene.add(chord_lin, chord2_lin)
+
 // SCENE UPDATING
 const updateScene = (screenVector: Vector2) => {
   let angle = Math.atan2(screenVector.y, screenVector.x)
@@ -66,6 +75,16 @@ const updateScene = (screenVector: Vector2) => {
   inv_exp.position.set(HALF_RADIUS * cosAngle, -HALF_RADIUS * sinAngle, 0)
   neg_inv_exp.position.set(-HALF_RADIUS * cosAngle, HALF_RADIUS * sinAngle, 0)
   sin.position.set(0, RADIUS * sinAngle, 0)
+
+
+  chord_lin.geometry.getAttribute('instanceEnd').setXY(0, cosAngle * HALF_RADIUS, sinAngle * HALF_RADIUS)
+  chord_lin.geometry.getAttribute('instanceEnd').needsUpdate = true
+
+  chord2_lin.geometry.getAttribute('instanceStart').setXY(0, cosAngle * HALF_RADIUS, sinAngle * HALF_RADIUS)
+  chord2_lin.geometry.getAttribute('instanceEnd').setY(0, sinAngle * RADIUS)
+  chord2_lin.geometry.getAttribute('instanceStart').needsUpdate = true
+  chord2_lin.geometry.getAttribute('instanceEnd').needsUpdate = true
+
 
 }
 scene.userData.update = updateScene

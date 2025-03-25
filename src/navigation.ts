@@ -19,7 +19,7 @@ import { pyt_cos_sin_scene } from './trig-scenes/pythagorean-cosine-sine'
 import { pyt_tan_sec_scene } from './trig-scenes/pythagorean-tangent-secant'
 import { pyt_cot_csc_scene } from './trig-scenes/pythagorean-cotangent-cosecant'
 import { pyt_sec_cos_sin_tan_scene } from './trig-scenes/pythagorean-secant-cosine-sine-tangent'
-import { pyt_all_scene } from './trig-scenes/pythagorean-all.ts'
+import { pyt_all_scene } from './trig-scenes/pythagorean-all'
 
 
 
