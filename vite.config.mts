@@ -6,5 +6,6 @@ export default defineConfig({
       usePolling: true
     }
   },
-  plugins: [glsl()]
+  plugins: [glsl()],
+  base: '/'
 })
