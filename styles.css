@@ -5,11 +5,35 @@
 }
 
 
+.math-section {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  row-gap: 20em;
+  column-gap: 20em;
+}
+
+section {
+}
+
+h3 {
+  margin: 0;
+}
+
+.ul-parent {
+  text-align: center;
+}
+
+.ul-parent > ul {
+  text-align: left;
+  display: inline-block;
+}
+
 body {
   margin: 0;
 	background-color: #242424;
 	color: white;
-  /*cursor: none;*/
+  text-align: center;
 }
 
 hr {
