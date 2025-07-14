@@ -87,3 +87,7 @@ hr::after {
   width: 400px;
   margin-top: 0.5em;
 }
+
+a:visited {
+  color: #00adff;
+}

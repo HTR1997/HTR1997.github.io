@@ -4,6 +4,7 @@ import { Line2 } from 'three/addons/lines/Line2.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 import { RADIUS_LINE_COLOR, COSINE_LINE_COLOR, SINE_LINE_COLOR, TANGENT_LINE_COLOR, SECANT_LINE_COLOR, COTANGENT_LINE_COLOR, COSECANT_LINE_COLOR, CHORD_LINE_COLOR } from '../constants'
+import scene_setup from '../scene-container';
 
 
 const scene = new Scene(); scene.background = new Color(0x242424);
@@ -87,5 +88,5 @@ const updateScene = (screenVector: Vector2) => {
 }
 scene.userData.update = updateScene
 
-const cos_scene = scene
-export { cos_scene }
+scene_setup(scene)
+

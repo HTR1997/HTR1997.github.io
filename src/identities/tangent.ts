@@ -4,10 +4,11 @@ import { Line2 } from 'three/addons/lines/Line2.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 import { RADIUS_LINE_COLOR, COSINE_LINE_COLOR, SINE_LINE_COLOR, TANGENT_LINE_COLOR, SECANT_LINE_COLOR } from '../constants'
+import scene_setup from '../scene-container';
 
 const scene = new Scene(); scene.background = new Color(0x242424);
 
-scene.userData.title = 'cos<sup>2</sup>θ + sin<sup>2</sup>θ = 1<sup>2</sup>'
+scene.userData.title = 'jtanθ = jsinθ / cosθ'
 
 const _v1 = new Vector3()
 const _v2 = new Vector3()
@@ -20,7 +21,8 @@ const HALF_RADIUS = RADIUS / 2
 const RADIUS_SQUARED = RADIUS * RADIUS
 
 const cursor = new Mesh(new SphereGeometry(2), new MeshNormalMaterial())
-scene.add(cursor)
+const cursor2 = new Mesh(new SphereGeometry(2), new MeshNormalMaterial({ side: BackSide }))
+scene.add(cursor, cursor2)
 
 
 const unitCircle = new Mesh(new TorusGeometry(RADIUS, 2), new MeshBasicMaterial({ color: 0x999999 }))
@@ -28,27 +30,32 @@ const origin = new Mesh(new SphereGeometry(3), new MeshBasicMaterial({ color: 0x
 const ex = new Mesh(new SphereGeometry(3), new MeshBasicMaterial({ color: 0x111111, depthTest: false })); ex.renderOrder = 2
 const cos = new Mesh(new SphereGeometry(3), new MeshBasicMaterial({ color: 0x8888ff, depthTest: false })); cos.renderOrder = 2
 const sin = new Mesh(new SphereGeometry(3), new MeshBasicMaterial({ color: 0xff8888, depthTest: false })); sin.renderOrder = 2
+const tan = new Mesh(new SphereGeometry(3), new MeshBasicMaterial({ color: 0x88ff88, depthTest: false })); sin.renderOrder = 2
 
 const exp_text = font_helper('e', 'jθ')
 const cos_text = font_helper('cosθ')
 const sin_text = font_helper('jsinθ')
+const tan_text = font_helper('jtanθ')
 
 ex.add(exp_text)
 cos.add(cos_text)
 sin.add(sin_text)
+tan.add(tan_text)
 
 scene.add(unitCircle, origin)
-scene.add(ex, cos, sin)
+scene.add(ex, cos, sin, tan)
 
 
 
-
-const rad_lin = new Line2(new LineGeometry().setPositions([0, 0, 0, RADIUS, 0, 0]), new LineMaterial({ color: RADIUS_LINE_COLOR, linewidth: 2 }))
+const rad_lin = new Line2(new LineGeometry().setPositions([0, 0, 0, RADIUS, 0, 0]), new LineMaterial({ color: RADIUS_LINE_COLOR, linewidth: 6 }))
 const cos_lin = new Line2(new LineGeometry().setPositions([0, 0, 0, RADIUS, 0, 0]), new LineMaterial({ color: COSINE_LINE_COLOR, linewidth: 2 }))
 const sin_lin = new Line2(new LineGeometry().setPositions([0, 0, 0, 0, 0, 0]), new LineMaterial({ color: SINE_LINE_COLOR, linewidth: 2 }))
 
+const tan_lin = new Line2(new LineGeometry().setPositions([0, 0, 0, 0, RADIUS, 0]), new LineMaterial({ color: TANGENT_LINE_COLOR, linewidth: 2 }))
 
-scene.add(rad_lin, cos_lin, sin_lin)
+const sec_lin = new Line2(new LineGeometry().setPositions([0, 0, 0, RADIUS, 0, 0]), new LineMaterial({ color: SECANT_LINE_COLOR, linewidth: 2 }))
+
+scene.add(rad_lin, cos_lin, sin_lin, tan_lin, sec_lin)
 
 
 // SCENE UPDATING
@@ -58,6 +65,10 @@ const updateScene = (screenVector: Vector2) => {
   let sinAngle = 0
   let tanAngle = 0
   cursor.position.set(screenVector.x, screenVector.y, 0)
+  _v2.set(screenVector.x, screenVector.y, 0)
+  const _magnitude = _v2.x * _v2.x + _v2.y * _v2.y
+  _v2.set(RADIUS_SQUARED * _v2.x / _magnitude, RADIUS_SQUARED * _v2.y / _magnitude, 0)
+  cursor2.position.set(_v2.x, -_v2.y, 0)
 
   cosAngle = Math.cos(angle)
   sinAngle = Math.sin(angle)
@@ -66,6 +77,8 @@ const updateScene = (screenVector: Vector2) => {
   ex.position.set(RADIUS * cosAngle, RADIUS * sinAngle, 0)
   sin.position.set(0, RADIUS * sinAngle, 0)
   cos.position.set(RADIUS * cosAngle, 0, 0)
+  //tan.position.set(RADIUS * Math.sign(cosAngle), Math.sign(cosAngle) * RADIUS * tanAngle, 0)
+  tan.position.set(RADIUS, tanAngle * RADIUS, 0)
 
 
   rad_lin.rotation.z = angle
@@ -77,8 +90,17 @@ const updateScene = (screenVector: Vector2) => {
   cos_lin.geometry.getAttribute('instanceEnd').setX(0, cosAngle * RADIUS)
   cos_lin.geometry.getAttribute('instanceEnd').needsUpdate = true
 
+  tan_lin.position.x = RADIUS
+  tan_lin.geometry.getAttribute('instanceEnd').setY(0, tanAngle * RADIUS)
+  tan_lin.geometry.getAttribute('instanceEnd').needsUpdate = true
+
+
+  sec_lin.rotation.z = angle
+  sec_lin.geometry.getAttribute('instanceEnd').setX(0, RADIUS / cosAngle)
+  sec_lin.geometry.getAttribute('instanceEnd').needsUpdate = true
+
 }
 scene.userData.update = updateScene
 
-const pyt_cos_sin_scene = scene
-export { pyt_cos_sin_scene }
+scene_setup(scene)
+
